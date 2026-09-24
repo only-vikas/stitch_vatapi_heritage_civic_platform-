@@ -1,4 +1,5 @@
 # Vatapi — Civic & Heritage Intelligence Platform
+<img width="1376" height="768" alt="vatapi_hp" src="https://github.com/user-attachments/assets/8a96f6cb-9b69-42bc-864e-07a71137301b" />
 
 > **Preserving Bagalkote's Chalukyan Heritage, Empowering Local Communities, and Elevating Visitor Experiences.**
 
