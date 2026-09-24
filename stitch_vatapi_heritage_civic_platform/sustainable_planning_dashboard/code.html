@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-primary-container": "#f4fffc", "outline": "#6d7a77", "on-primary-fixed-variant": "#005049", "tertiary": "#6f574f", "surface-container": "#efeeeb", "primary": "#00685f", "tertiary-fixed": "#fddbd1", "secondary-fixed": "#ffdbd1", "tertiary-fixed-dim": "#dfc0b6", "on-tertiary": "#ffffff", "on-surface-variant": "#3d4947", "inverse-primary": "#6bd8cb", "on-secondary": "#ffffff", "on-primary-fixed": "#00201d", "background": "#fbf9f6", "on-secondary-fixed-variant": "#7b2e17", "on-tertiary-container": "#fffbff", "surface-dim": "#dbdad7", "surface-container-high": "#eae8e5", "primary-fixed-dim": "#6bd8cb", "on-primary": "#ffffff", "secondary": "#9a452c", "primary-container": "#008378", "on-error-container": "#93000a", "on-background": "#1b1c1a", "on-tertiary-fixed-variant": "#58423a", "error": "#ba1a1a", "outline-variant": "#bcc9c6", "surface-container-lowest": "#ffffff", "on-secondary-fixed": "#3b0900", "surface-tint": "#006a61", "secondary-container": "#ff9475", "inverse-on-surface": "#f2f0ed", "on-error": "#ffffff", "surface-variant": "#e4e2df", "secondary-fixed-dim": "#ffb5a0", "surface": "#fbf9f6", "surface-bright": "#fbf9f6", "on-tertiary-fixed": "#291711", "surface-container-low": "#f5f3f0", "primary-fixed": "#89f5e7", "on-surface": "#1b1c1a", "tertiary-container": "#896f66", "surface-container-highest": "#e4e2df", "inverse-surface": "#30312f", "error-container": "#ffdad6", "on-secondary-container": "#762b14" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter-sm": "1rem", "space-2xl": "4rem", "margin": "1.5rem", "space-md": "1.5rem", "gutter-lg": "2rem", "space-xl": "3rem", "gutter": "1.5rem", "margin-mobile": "1rem", "space-lg": "2rem", "margin-desktop": "3rem", "space-xs": "0.5rem", "space-sm": "1rem" }, "fontFamily": { "body-lg": ["Inter"], "headline-lg": ["Playfair Display"], "headline-lg-mobile": ["Playfair Display"], "headline-md": ["Playfair Display"], "display-lg": ["Playfair Display"], "headline-sm": ["Playfair Display"], "title-md": ["Inter"], "label-sm": ["Inter"], "label-md": ["Inter"], "body-md": ["Inter"], "title-lg": ["Inter"], "display-lg-mobile": ["Playfair Display"] }, "fontSize": { "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "headline-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-lg-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "0", "fontWeight": "600" }], "headline-md": ["28px", { "lineHeight": "36px", "fontWeight": "500" }], "display-lg": ["56px", { "lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "headline-sm": ["22px", { "lineHeight": "30px", "fontWeight": "500" }], "title-md": ["16px", { "lineHeight": "24px", "fontWeight": "600" }], "label-sm": ["11px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "500" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "title-lg": ["18px", { "lineHeight": "26px", "fontWeight": "600" }], "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.01em", "fontWeight": "600" }] } } } };</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-md shadow-[0_1px_8px_rgba(46,28,22,0.04)]"><div class="h-20 max-w-7xl mx-auto px-margin lg:px-margin-desktop flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-xs shrink-0"><a class="flex items-center gap-space-xs" data-path="home" href="#"><img alt="Vatapi Brand Wordmark" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1X-maavYkxFrjSsXgn8v5aGD493CMrh8f7M4-u83IMdAcusMde39XLyN3gOw8B9mQQNqPV5uWIJTYZ3GRqXaiXGTgZDvpY-lqE9DGmpk2GAeBhadZwE0NX1q_DwqPTB-E-iq2o2TtICMCpcoUjgeydFiPXSBFeREHab85-CrKZkT8KQzU3MUNHCBCp2AQ6V2bXaE97kFClw7IdjyfYyncRtQskUpwN1bXYby47e1LGH5sVFA4h7cjn943M"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-secondary tracking-tight leading-none">Vatapi</span><span class="font-label-sm text-label-sm text-outline tracking-wider uppercase">Bagalkote Heritage AI</span></div></a></div><nav class="hidden xl:flex items-center gap-1" data-active-classes="bg-surface-container-high text-primary font-title-md rounded-lg"><a class="px-2 py-1.5 rounded-lg font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap" data-path="home" href="#">Home</a><a class="px-2 py-1.5 rounded-lg font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap" data-path="heritage-watch" href="#">Heritage Watch</a><a class="px-2 py-1.5 rounded-lg font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap" data-path="ooru-oota" href="#">Ooru Oota</a><a class="px-2 py-1.5 rounded-lg font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap" data-path="circuit-planner" href="#">Circuit Planner</a><a class="px-2 py-1.5 rounded-lg font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap" data-path="public-ledger" href="#">Public Ledger</a><a class="px-2 py-1.5 rounded-lg font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap" data-path="access-mode" href="#">Access Mode</a><a aria-current="page" class="px-2 py-1.5 transition-colors whitespace-nowrap bg-surface-container-high text-primary font-title-md rounded-lg" data-path="sustainability" href="#">Sustainability</a><a class="px-2 py-1.5 rounded-lg font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap" data-path="about" href="#">About</a></nav><div class="flex items-center gap-space-xs sm:gap-space-sm shrink-0"><div class="hidden md:flex items-center gap-1.5 px-space-xs py-1 rounded-full bg-surface-container text-on-surface-variant"><span class="material-symbols-outlined text-[16px] text-primary">location_on</span><span class="font-label-md text-label-md font-medium text-on-surface">Bagalkote District</span></div><button class="px-space-xs py-1 rounded-lg bg-surface-container text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md tracking-wider" type="button">KN | EN</button><a class="inline-flex items-center gap-1 px-space-sm py-2 rounded-lg bg-primary text-on-primary hover:bg-primary-container font-title-md text-title-md shadow-sm transition-all whitespace-nowrap" data-path="heritage-watch" href="#"><span class="material-symbols-outlined text-[18px]">add</span><span>Report an Issue</span></a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Command Header & Telemetry Scrim -->
+<section class="w-full bg-surface py-space-md sm:py-space-lg">
+<div class="max-w-7xl mx-auto px-margin lg:px-margin-desktop">
+<!-- Title & Live Meta Row -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md pb-space-md">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-space-xs">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-secondary text-on-secondary font-label-md text-label-md">
+<span class="w-2 h-2 rounded-full bg-primary-fixed animate-pulse"></span>
+              ECO-SENTINEL GRID
+            </span>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm tracking-widest font-semibold uppercase">
+              Malaprabha Basin
+            </span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-secondary tracking-tight">
+            Sustainable Planning Dashboard
+          </h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-3xl">
+            Real-time telemetry and crowd dispersal intelligence across the Malaprabha Heritage Basin. Balancing Chalukyan preservation with low-impact civic pilgrimage.
+          </p>
+</div>
+<!-- Badges & Global Mode Actions -->
+<div class="flex items-center flex-wrap gap-space-xs self-start lg:self-center shrink-0">
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-high text-on-surface font-label-md text-label-md shadow-sm">
+<span class="material-symbols-outlined text-[16px] text-primary">sensors</span>
+<span>KSPCB Telemetry Active</span>
+</div>
+<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary-fixed text-on-secondary-fixed font-label-md text-label-md font-semibold tracking-wide">
+<span class="material-symbols-outlined text-[15px]">verified</span>
+            Simulated Data
+          </span>
+<button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary text-on-primary font-title-md text-title-md hover:bg-primary-container transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Export Brief</span>
+</button>
+</div>
+</div>
+<!-- Live Civic Ticker Strip -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-xs sm:gap-space-sm p-space-sm rounded-xl bg-surface-container-low shadow-sm">
+<div class="flex items-center gap-space-sm p-space-xs rounded-lg bg-surface-container-lowest">
+<div class="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[22px]">groups</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Active Visitors</span>
+<div class="flex items-baseline gap-1.5">
+<span class="font-title-lg text-title-lg text-on-surface font-bold">3,420</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">Safe Limit (&lt;5,000)</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-sm p-space-xs rounded-lg bg-surface-container-lowest">
+<div class="w-10 h-10 rounded-lg bg-secondary/10 text-secondary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[22px]">auto_delete</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Waste SLA Clearance</span>
+<div class="flex items-baseline gap-1.5">
+<span class="font-title-lg text-title-lg text-on-surface font-bold">94.2%</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">18m Avg Dispatch</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-sm p-space-xs rounded-lg bg-surface-container-lowest">
+<div class="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[22px]">water_ec</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Agastya Teertha Quality</span>
+<div class="flex items-baseline gap-1.5">
+<span class="font-title-lg text-title-lg text-on-surface font-bold">82/100</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">Good (Grade B+)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 3-Column Core Analytical Dashboard -->
+<section class="w-full pb-space-2xl">
+<div class="max-w-7xl mx-auto px-margin lg:px-margin-desktop">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-md items-start">
+<!-- COLUMN 1: CROWD FORECAST & DISPERSAL (4 Cols) -->
+<div class="lg:col-span-4 flex flex-col gap-space-md">
+<div class="rounded-xl bg-surface-container-lowest p-space-md shadow-sm flex flex-col gap-space-md">
+<!-- Panel Header -->
+<div class="flex items-start justify-between gap-space-xs">
+<div>
+<span class="font-label-sm text-label-sm text-secondary font-semibold uppercase tracking-wider">Pillars of Density</span>
+<h2 class="font-headline-sm text-headline-sm text-secondary tracking-tight">
+                  Crowd Forecast &amp; Carrying Capacity
+                </h2>
+</div>
+<span class="material-symbols-outlined text-secondary text-[24px]">reduce_capacity</span>
+</div>
+<!-- Live Capacity Bar Gauge -->
+<div class="flex flex-col gap-space-xs p-space-sm rounded-lg bg-surface-container-low">
+<div class="flex justify-between items-center text-on-surface">
+<span class="font-title-md text-title-md font-medium">Sustainable Basin Load</span>
+<span class="font-title-lg text-title-lg text-primary font-bold">68%</span>
+</div>
+<div class="w-full h-3 rounded-full bg-surface-container-highest overflow-hidden relative">
+<div class="h-full bg-gradient-to-r from-primary via-primary-container to-secondary rounded-full transition-all duration-500" style="width: 68%;"></div>
+</div>
+<div class="flex justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>Current: 3,420 PAX</span>
+<span>Max Ceiling: 5,000 PAX</span>
+</div>
+</div>
+<!-- Heatmap Grid by Site & Slot -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<h3 class="font-title-md text-title-md text-on-surface">Hourly Pressure Matrix</h3>
+<span class="font-label-sm text-label-sm text-outline">Today (Live Cycle)</span>
+</div>
+<div class="overflow-x-auto pb-1">
+<table class="w-full text-left font-body-md text-body-md">
+<thead>
+<tr class="font-label-sm text-label-sm text-on-surface-variant">
+<th class="py-1 pr-2 font-normal">Sanctuary</th>
+<th class="py-1 px-1.5 text-center font-normal">07:00</th>
+<th class="py-1 px-1.5 text-center font-normal">11:00</th>
+<th class="py-1 px-1.5 text-center font-normal">15:00</th>
+<th class="py-1 pl-1.5 text-center font-normal">17:00</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container">
+<!-- Badami Caves -->
+<tr>
+<td class="py-2 pr-2 font-medium text-on-surface text-label-md">Badami Caves</td>
+<td class="py-2 px-1 text-center">
+<span class="inline-block px-2 py-0.5 rounded text-label-sm font-semibold bg-primary-fixed text-on-primary-fixed">Low</span>
+</td>
+<td class="py-2 px-1 text-center">
+<span class="inline-block px-2 py-0.5 rounded text-label-sm font-semibold bg-error-container text-on-error-container">Peak</span>
+</td>
+<td class="py-2 px-1 text-center">
+<span class="inline-block px-2 py-0.5 rounded text-label-sm font-semibold bg-secondary-fixed text-on-secondary-fixed">Mod</span>
+</td>
+<td class="py-2 pl-1 text-center">
+<span class="inline-block px-2 py-0.5 rounded text-label-sm font-semibold bg-error-container text-on-error-container">Peak</span>
+</td>
+</tr>
+<!-- Pattadakal -->
+<tr>
+<td class="py-2 pr-2 font-medium text-on-surface text-label-md">Pattadakal</td>
+<td class="py-2 px-1 text-center">
+<span class="inline-block px-2 py-0.5 rounded text-label-sm font-semibold bg-primary-fixed text-on-primary-fixed">Low</span>
+</td>
+<td class="py-2 px-1 text-center">
+<span class="inline-block px-2 py-0.5 rounded text-label-sm font-semibold bg-secondary-fixed text-on-secondary-fixed">Mod</span>
+</td>
+<td class="py-2 px-1 text-center">
+<span class="inline-block px-2 py-0.5 rounded text-label-sm font-semibold bg-secondary-fixed text-on-secondary-fixed">Mod</span>
+</td>
+<td class="py-2 pl-1 text-center">
+<span class="inline-block px-2 py-0.5 rounded text-label-sm font-semibold bg-primary-fixed text-on-primary-fixed">Low</span>
+</td>
+</tr>
+<!-- Aihole Complex -->
+<tr>
+<td class="py-2 pr-2 font-medium text-on-surface text-label-md">Aihole Ring</td>
+<td class="py-2 px-1 text-center">
+<span class="inline-block px-2 py-0.5 rounded text-label-sm font-semibold bg-primary-fixed text-on-primary-fixed">Low</span>
+</td>
+<td class="py-2 px-1 text-center">
+<span class="inline-block px-2 py-0.5 rounded text-label-sm font-semibold bg-primary-fixed text-on-primary-fixed">Low</span>
+</td>
+<td class="py-2 px-1 text-center">
+<span class="inline-block px-2 py-0.5 rounded text-label-sm font-semibold bg-secondary-fixed text-on-secondary-fixed">Mod</span>
+</td>
+<td class="py-2 pl-1 text-center">
+<span class="inline-block px-2 py-0.5 rounded text-label-sm font-semibold bg-primary-fixed text-on-primary-fixed">Low</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Dispersal Nudges Panel -->
+<div class="flex flex-col gap-space-xs pt-space-xs">
+<div class="flex items-center gap-1.5 text-secondary">
+<span class="material-symbols-outlined text-[18px]">alt_route</span>
+<h3 class="font-title-md text-title-md font-semibold">Active Dispersal Nudges</h3>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">
+                Dynamic routing algorithms shifting visitor streams to prevent cliffside sandstone micro-wear.
+              </p>
+<div class="flex flex-col gap-space-xs mt-1">
+<!-- Nudge 1 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-1 hover:bg-surface-container transition-colors">
+<div class="flex items-center justify-between">
+<span class="font-title-md text-title-md text-primary font-bold">Pattadakal Shoreline</span>
+<span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-semibold">-82% Crowd</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface">
+                    Best morning window at 7:00 AM. 
+                  </p>
+<div class="flex items-center gap-1 text-secondary font-label-md text-label-md font-semibold">
+<span class="material-symbols-outlined text-[16px]">stars</span>
+<span>Free Heritage Token + Audio Guide</span>
+</div>
+</div>
+<!-- Nudge 2 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-1 hover:bg-surface-container transition-colors">
+<div class="flex items-center justify-between">
+<span class="font-title-md text-title-md text-on-surface font-semibold">Mahakuta Banyan Grove</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">Mild Surge</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                    Natural spring shade cool corridor. Ideal solitary window: 1:30 PM - 3:00 PM.
+                  </p>
+</div>
+<!-- Nudge 3 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-1 hover:bg-surface-container transition-colors">
+<div class="flex items-center justify-between">
+<span class="font-title-md text-title-md text-on-surface font-semibold">Aihole Megalithic Ridge</span>
+<span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm">Open Sanctuary</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                    Quiet window open now. Zero bus parking pressure recorded.
+                  </p>
+</div>
+</div>
+</div>
+<!-- Footnote Info -->
+<div class="p-2.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-outline">info</span>
+<span>ASI Badami Sub-Circle crowd thresholds updated every 5 minutes.</span>
+</div>
+</div>
+</div>
+<!-- COLUMN 2: LAKE HEALTH MONITOR - AGASTYA TEERTHA (4 Cols) -->
+<div class="lg:col-span-4 flex flex-col gap-space-md">
+<div class="rounded-xl bg-surface-container-lowest p-space-md shadow-sm flex flex-col gap-space-md">
+<!-- Panel Header -->
+<div class="flex items-start justify-between gap-space-xs">
+<div>
+<span class="font-label-sm text-label-sm text-secondary font-semibold uppercase tracking-wider">Hydrological Guard</span>
+<h2 class="font-headline-sm text-headline-sm text-secondary tracking-tight">
+                  Agastya Lake Water Sentinel
+                </h2>
+</div>
+<span class="material-symbols-outlined text-secondary text-[24px]">water_bottle</span>
+</div>
+<!-- 2x2 Telemetry Metric Matrix -->
+<div class="grid grid-cols-2 gap-space-xs">
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col">
+<span class="font-label-sm text-label-sm text-outline">Dissolved Oxygen</span>
+<span class="font-title-lg text-title-lg text-on-surface font-bold mt-1">6.8 <span class="font-body-md text-body-md text-on-surface-variant font-normal">mg/L</span></span>
+<div class="flex items-center gap-1 text-primary font-label-sm text-label-sm mt-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span>Optimal Range</span>
+</div>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col">
+<span class="font-label-sm text-label-sm text-outline">Lake Acidity (pH)</span>
+<span class="font-title-lg text-title-lg text-on-surface font-bold mt-1">7.4 <span class="font-body-md text-body-md text-on-surface-variant font-normal">pH</span></span>
+<div class="flex items-center gap-1 text-primary font-label-sm text-label-sm mt-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span>Neutral Alkaline</span>
+</div>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col">
+<span class="font-label-sm text-label-sm text-outline">Turbidity Index</span>
+<span class="font-title-lg text-title-lg text-on-surface font-bold mt-1">14 <span class="font-body-md text-body-md text-on-surface-variant font-normal">NTU</span></span>
+<div class="flex items-center gap-1 text-primary font-label-sm text-label-sm mt-1">
+<span class="material-symbols-outlined text-[14px]">waves</span>
+<span>Normal Sediment</span>
+</div>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col">
+<span class="font-label-sm text-label-sm text-outline">Algal Biomass</span>
+<span class="font-title-lg text-title-lg text-on-surface font-bold mt-1">0.12 <span class="font-body-md text-body-md text-on-surface-variant font-normal">RFU</span></span>
+<div class="flex items-center gap-1 text-primary font-label-sm text-label-sm mt-1">
+<span class="material-symbols-outlined text-[14px]">verified</span>
+<span>Low Risk</span>
+</div>
+</div>
+</div>
+<!-- Minimal SVG Trend Graph (30 Days) -->
+<div class="flex flex-col gap-space-xs p-space-sm rounded-lg bg-surface-container-low">
+<div class="flex items-center justify-between">
+<span class="font-title-md text-title-md text-on-surface font-medium">30-Day Purity Trajectory</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">+6.4% MoM</span>
+</div>
+<!-- Clean SVG Sparkline with Baseline -->
+<div class="w-full h-28 relative mt-1">
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 300 90">
+<!-- Shaded Area -->
+<defs>
+<lineargradient id="lakeGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#00685f" stop-opacity="0.25"></stop>
+<stop offset="100%" stop-color="#00685f" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<!-- Baseline 70 Threshold -->
+<line stroke="#bcc9c6" stroke-dasharray="4,4" stroke-width="1" x1="0" x2="300" y1="55" y2="55"></line>
+<text fill="#6d7a77" font-family="Inter" font-size="8" x="4" y="50">Safe Baseline (70)</text>
+<!-- Path Area -->
+<path d="M 0 65 Q 40 50, 75 58 T 150 40 T 225 32 T 300 22 L 300 90 L 0 90 Z" fill="url(#lakeGradient)"></path>
+<!-- Main Curve -->
+<path d="M 0 65 Q 40 50, 75 58 T 150 40 T 225 32 T 300 22" fill="none" stroke="#00685f" stroke-linecap="round" stroke-width="2.5"></path>
+<!-- Current Data Point -->
+<circle cx="300" cy="22" fill="#00685f" r="4"></circle>
+</svg>
+</div>
+<div class="flex justify-between font-label-sm text-label-sm text-outline pt-1">
+<span>30 Days Ago (72 Index)</span>
+<span>Day 15 (77 Index)</span>
+<span class="font-semibold text-primary">Now (82 Index)</span>
+</div>
+</div>
+<!-- Citizen Field Evidence Gallery -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<h3 class="font-title-md text-title-md text-on-surface">Edge Telemetry &amp; Field Stream</h3>
+<span class="font-label-sm text-label-sm text-primary font-semibold">3 New Submissions</span>
+</div>
+<div class="grid grid-cols-3 gap-2">
+<div class="relative rounded-lg overflow-hidden h-20 group">
+<img class="w-full h-full object-cover" data-alt="High angle shot of Agastya Lake serene sandstone ghats with clean water reflecting Bhutanatha Temple at Badami Karnataka in morning light." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkdRVaVwWe2-n_1MD1jf_sqVLgEbYBRzzr0F6FHMf6Sk37BxGc2XQBcOcCQzgzucHQwQJ-MMsXkk5LxiNwIOMPFNv2cGsTSBHLWZrv4HSyQXBAvPhC0NH0Q40PDuaR575JaxbI-k94q5dJbZPtgLLx-hESg8jzXFAd8cebCkpyXOUL4kz9Y6fZcc5k3P5QGK2wwb2kRZtXRCAcl0KK_ExrYvDiVUAW7EMjHrVcUFbafe-XqWa9VEYr"/>
+<span class="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-surface-container-lowest/90 text-on-surface font-label-sm text-[10px]">North Ghat</span>
+</div>
+<div class="relative rounded-lg overflow-hidden h-20 group">
+<img class="w-full h-full object-cover" data-alt="Clear water inlet channel of Agastya lake stone pushkarini with ancient Chalukya masonry free from plastic debris." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAJso531CrM-pfXq_R2d8YDc3-DS7nrrUslLlk2UU61SppAsZ-JfbX2HqKDyVoJTRKvJ6K5LnkaJwnqfs91XQpvenY7ksU93PY2OV29Zj5kmCVmR32eKmo1gp70P2PghqAkLiLQcfGAsrLKUUFuo0IaVrEpCuxJWPV1smhSYrsFiwW9gKUzEaY7O0WxL5DcTTD-X_uVGhFThUPjENhpAZfOlzNeovSIooLr1perze4qknTBuLgPQ6_"/>
+<span class="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-surface-container-lowest/90 text-on-surface font-label-sm text-[10px]">Silt Trap #2</span>
+</div>
+<div class="relative rounded-lg overflow-hidden h-20 group">
+<img class="w-full h-full object-cover" data-alt="Calm water ripple around ancient red sandstone boulders at Badami cave heritage sanctuary shoreline during sunny day." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmPCnRDXtITFdwoVg2sWR09C1DnHfytvXH3zaAG5htmxy7y5RbOSIIHXNYCXlymr0stXi9xPu7eG1UjIup-L2WeR-1F6h9_8d969sVA9lMNLTmYLeNWIJYv4kGjAt2yNYDr22vpk1M1xE9jaJZX-F2mu50Z91ysTusPEXDMP9U-xQP7p6TcUPQOnfxlIy4WOz4YXmiq-hwfbaNgaDxFtiVnXSk0zh8Cds0ADruwnIYV5XPklbokZGB"/>
+<span class="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-surface-container-lowest/90 text-on-surface font-label-sm text-[10px]">East Basin</span>
+</div>
+</div>
+</div>
+<!-- Action CTAs -->
+<div class="flex flex-col sm:flex-row items-center gap-space-xs pt-space-xs">
+<button class="w-full sm:flex-1 inline-flex items-center justify-center gap-2 px-space-sm py-2.5 rounded-lg bg-primary text-on-primary font-title-md text-title-md hover:bg-primary-container transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">opacity</span>
+<span>Log Water Reading</span>
+</button>
+<button class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-space-sm py-2.5 rounded-lg bg-surface-container text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">add_a_photo</span>
+<span>Report Silt</span>
+</button>
+</div>
+</div>
+</div>
+<!-- COLUMN 3: CLEAN TRAIL & WASTE MANAGEMENT (4 Cols) -->
+<div class="lg:col-span-4 flex flex-col gap-space-md">
+<div class="rounded-xl bg-surface-container-lowest p-space-md shadow-sm flex flex-col gap-space-md">
+<!-- Panel Header -->
+<div class="flex items-start justify-between gap-space-xs">
+<div>
+<span class="font-label-sm text-label-sm text-secondary font-semibold uppercase tracking-wider">Zero-Waste Sentinel</span>
+<h2 class="font-headline-sm text-headline-sm text-secondary tracking-tight">
+                  Clean Trail &amp; Waste Operations
+                </h2>
+</div>
+<span class="material-symbols-outlined text-secondary text-[24px]">delete_sweep</span>
+</div>
+<!-- Circular Gauge / Donut Metric Block -->
+<div class="flex items-center gap-space-md p-space-sm rounded-lg bg-surface-container-low">
+<!-- SVG Donut Chart 88% -->
+<div class="relative w-24 h-24 shrink-0 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<!-- Background Track -->
+<path class="text-surface-container-highest" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
+<!-- Progress Value 88% -->
+<path class="text-primary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="88, 100" stroke-linecap="round" stroke-width="3.5"></path>
+</svg>
+<div class="absolute flex flex-col items-center justify-center text-center">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold leading-none">88</span>
+<span class="font-label-sm text-[10px] text-outline uppercase font-semibold">/100</span>
+</div>
+</div>
+<!-- Breakdown metrics -->
+<div class="flex flex-col gap-1 min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-title-md text-title-md text-on-surface font-bold">Leave-No-Trace Score</span>
+<span class="px-1.5 py-0.5 rounded bg-primary/10 text-primary font-label-sm text-label-sm font-semibold">Grade A</span>
+</div>
+<div class="flex flex-col gap-1 text-on-surface-variant font-label-sm text-label-sm mt-1">
+<div class="flex items-center justify-between gap-2">
+<span>Plastic-Free Zone:</span>
+<span class="font-semibold text-on-surface">94%</span>
+</div>
+<div class="flex items-center justify-between gap-2">
+<span>Composting Compliance:</span>
+<span class="font-semibold text-on-surface">89%</span>
+</div>
+<div class="flex items-center justify-between gap-2">
+<span>Can Proximity (&lt;50m):</span>
+<span class="font-semibold text-on-surface">82%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Regional Litter Hotspot Heatmap Visual -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<h3 class="font-title-md text-title-md text-on-surface">Regional Trail Hotspots</h3>
+<span class="font-label-sm text-label-sm text-secondary font-semibold">Live GIS Overlay</span>
+</div>
+<div class="flex flex-col gap-2">
+<!-- Zone A -->
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-2 min-w-0">
+<span class="w-2.5 h-2.5 rounded-full bg-error shrink-0"></span>
+<div class="flex flex-col truncate">
+<span class="font-body-md text-body-md text-on-surface font-medium truncate">Cave 1 Stairs &amp; Ticket Plaza</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">High Litter Pressure</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm font-semibold text-primary shrink-0">Cleared 8m ago</span>
+</div>
+<!-- Zone B -->
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-2 min-w-0">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary shrink-0"></span>
+<div class="flex flex-col truncate">
+<span class="font-body-md text-body-md text-on-surface font-medium truncate">North Fort Trail Vista</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Medium Pack-In Waste</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm font-semibold text-on-surface-variant shrink-0">Team en-route</span>
+</div>
+<!-- Zone C -->
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-2 min-w-0">
+<span class="w-2.5 h-2.5 rounded-full bg-primary shrink-0"></span>
+<div class="flex flex-col truncate">
+<span class="font-body-md text-body-md text-on-surface font-medium truncate">Aihole Durga Temple Promenade</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Zero Waste Baseline</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm font-semibold text-primary shrink-0">Optimal</span>
+</div>
+</div>
+</div>
+<!-- Before & After Proof Grid -->
+<div class="flex flex-col gap-space-xs pt-space-xs">
+<div class="flex items-center justify-between">
+<h3 class="font-title-md text-title-md text-on-surface font-medium">Eco-Sena Verified Removals</h3>
+<span class="font-label-sm text-label-sm text-outline">Bagalkote Youth Volunteers</span>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-space-xs">
+<div class="flex items-center justify-between text-on-surface">
+<span class="font-label-md text-label-md font-semibold text-secondary">Cave 2 Escarpment</span>
+<span class="font-label-sm text-label-sm text-outline">Today, 09:15 AM</span>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<div class="flex flex-col gap-1">
+<div class="relative rounded-lg overflow-hidden h-20">
+<img class="w-full h-full object-cover" data-alt="Close up photograph of plastic bottles and snack wrappers collected before cleanup near rocky red sandstone cave base at Badami." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_pf0ZQ9rzqSFDmS6EIbbHo6U8Mjn7aaS75lUFo7lkRtpNbcuJUfACquX8fSqVTismh-0nB4YfAm6Bqj677yvOqD71cXJjnMybpcpp4NqYO23Pal-FtN6tjRWCxyoA6uMxFFYv6wrRiiGBYRU5q0X-hX01QhwxCiphyeYaVjpqRV1ylbDZgMk2zmgyhp-VfRK4AklY1DIOmwb5kDVcJuXQa-o2msOYC_JVuRuLs919LYdyg2MZXAP3"/>
+<span class="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-error text-on-error font-label-sm text-[10px] font-bold">BEFORE</span>
+</div>
+<span class="font-label-sm text-[11px] text-on-surface-variant">12kg debris detected</span>
+</div>
+<div class="flex flex-col gap-1">
+<div class="relative rounded-lg overflow-hidden h-20">
+<img class="w-full h-full object-cover" data-alt="Pristine red sandstone ground after eco volunteer cleanup with spotless rock surface at Badami heritage site." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHAoRs6maCaYtJvkR3DSfaWBMq5kCOiYqRvIXKBkwKd23ENDIlqYEkcN7Cd4JODz5vF_Kl3VMN5VVShJC86LlbDeEw4i3ed2nJwrhAxUB-cQ5m3Uyf4zeXtIq5caVS2zN3788CVs9u-F00JJ1oRvWLtCBbeohobB_HJFQbij5IPyuQzp5mQYhy59_LoyS9xIMIfPSrc3VtVvenqTCntp6Z7GWuoJO_gRYAZibyzs0FC7kkZbyfFECD"/>
+<span class="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-primary text-on-primary font-label-sm text-[10px] font-bold">RESOLVED</span>
+</div>
+<span class="font-label-sm text-[11px] text-primary font-medium">Cleared by Sena Unit #4</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom CTA Link -->
+<div class="pt-space-xs flex items-center justify-between">
+<a class="inline-flex items-center gap-1.5 font-title-md text-title-md text-primary hover:text-primary-container font-semibold transition-colors" href="#">
+<span>Join Weekend Clean Trail Drive</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+<span class="font-label-sm text-label-sm text-outline">Next: Sat 6:30 AM</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Technical Verification / Bottom Bar -->
+<section class="w-full bg-surface-container py-space-sm">
+<div class="max-w-7xl mx-auto px-margin lg:px-margin-desktop flex flex-col md:flex-row items-center justify-between gap-space-xs font-label-sm text-label-sm text-on-surface-variant">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span>Karnataka State Pollution Control Board &amp; ASI Environmental Division Integration Grid.</span>
+</div>
+<div class="flex items-center gap-space-sm text-outline">
+<span>Cycle Hash: #MALA-8849-BGL</span>
+<span>Simulated Data for Civic Demonstration</span>
+</div>
+</div>
+</section>
+</div></main><footer class="w-full bg-surface-container-low mt-space-2xl"><div class="max-w-7xl mx-auto px-margin lg:px-margin-desktop py-space-xl"><div class="flex flex-col md:flex-row items-center justify-between gap-space-md"><div class="flex flex-col items-center md:items-start gap-1"><div class="flex items-center gap-space-xs"><span class="font-headline-sm text-headline-sm text-secondary">Vatapi</span><span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Civic AI &amp; Heritage Grid</span></div><p class="font-body-md text-body-md text-on-surface-variant">Protecting Chalukya monumentality, empowering local civic stewardship in Bagalkote District.</p></div><div class="flex flex-wrap items-center gap-space-md font-body-md text-body-md text-on-surface-variant"><a class="hover:text-on-surface transition-colors" data-path="heritage-watch" href="#">Civic Portal</a><a class="hover:text-on-surface transition-colors" data-path="circuit-planner" href="#">AI Routes</a><a class="hover:text-on-surface transition-colors" data-path="access-mode" href="#">Access Mode</a><a class="hover:text-on-surface transition-colors" data-path="sustainability" href="#">Sustainability</a><a class="hover:text-on-surface transition-colors" data-path="public-ledger" href="#">Open Data</a><a class="hover:text-on-surface transition-colors" data-path="about" href="#">Chalukya Archives</a></div></div><div class="mt-space-lg pt-space-md flex flex-col sm:flex-row items-center justify-between gap-space-sm font-label-sm text-label-sm text-outline"><p>© 2025 Vatapi Platform • Bagalkote District Administration &amp; Heritage Directorate.</p><p>Crafted in Badami Red Sandstone Aesthetic.</p></div></div></footer></body></html>

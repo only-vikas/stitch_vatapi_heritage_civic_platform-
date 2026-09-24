@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-primary-container": "#f4fffc", "outline": "#6d7a77", "on-primary-fixed-variant": "#005049", "tertiary": "#6f574f", "surface-container": "#efeeeb", "primary": "#00685f", "tertiary-fixed": "#fddbd1", "secondary-fixed": "#ffdbd1", "tertiary-fixed-dim": "#dfc0b6", "on-tertiary": "#ffffff", "on-surface-variant": "#3d4947", "inverse-primary": "#6bd8cb", "on-secondary": "#ffffff", "on-primary-fixed": "#00201d", "background": "#fbf9f6", "on-secondary-fixed-variant": "#7b2e17", "on-tertiary-container": "#fffbff", "surface-dim": "#dbdad7", "surface-container-high": "#eae8e5", "primary-fixed-dim": "#6bd8cb", "on-primary": "#ffffff", "secondary": "#9a452c", "primary-container": "#008378", "on-error-container": "#93000a", "on-background": "#1b1c1a", "on-tertiary-fixed-variant": "#58423a", "error": "#ba1a1a", "outline-variant": "#bcc9c6", "surface-container-lowest": "#ffffff", "on-secondary-fixed": "#3b0900", "surface-tint": "#006a61", "secondary-container": "#ff9475", "inverse-on-surface": "#f2f0ed", "on-error": "#ffffff", "surface-variant": "#e4e2df", "secondary-fixed-dim": "#ffb5a0", "surface": "#fbf9f6", "surface-bright": "#fbf9f6", "on-tertiary-fixed": "#291711", "surface-container-low": "#f5f3f0", "primary-fixed": "#89f5e7", "on-surface": "#1b1c1a", "tertiary-container": "#896f66", "surface-container-highest": "#e4e2df", "inverse-surface": "#30312f", "error-container": "#ffdad6", "on-secondary-container": "#762b14" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter-sm": "1rem", "space-2xl": "4rem", "margin": "1.5rem", "space-md": "1.5rem", "gutter-lg": "2rem", "space-xl": "3rem", "gutter": "1.5rem", "margin-mobile": "1rem", "space-lg": "2rem", "margin-desktop": "3rem", "space-xs": "0.5rem", "space-sm": "1rem" }, "fontFamily": { "body-lg": ["Inter"], "headline-lg": ["Playfair Display"], "headline-lg-mobile": ["Playfair Display"], "headline-md": ["Playfair Display"], "display-lg": ["Playfair Display"], "headline-sm": ["Playfair Display"], "title-md": ["Inter"], "label-sm": ["Inter"], "label-md": ["Inter"], "body-md": ["Inter"], "title-lg": ["Inter"], "display-lg-mobile": ["Playfair Display"] }, "fontSize": { "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "headline-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-lg-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "0", "fontWeight": "600" }], "headline-md": ["28px", { "lineHeight": "36px", "fontWeight": "500" }], "display-lg": ["56px", { "lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "headline-sm": ["22px", { "lineHeight": "30px", "fontWeight": "500" }], "title-md": ["16px", { "lineHeight": "24px", "fontWeight": "600" }], "label-sm": ["11px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "500" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "title-lg": ["18px", { "lineHeight": "26px", "fontWeight": "600" }], "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.01em", "fontWeight": "600" }] } } } };</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-md shadow-[0_1px_8px_rgba(46,28,22,0.04)]"><div class="h-20 max-w-7xl mx-auto px-margin lg:px-margin-desktop flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md shrink-0"><a class="flex items-center gap-space-xs" data-path="home" href="#"><img alt="Vatapi Brand Wordmark" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1X-maavYkxFrjSsXgn8v5aGD493CMrh8f7M4-u83IMdAcusMde39XLyN3gOw8B9mQQNqPV5uWIJTYZ3GRqXaiXGTgZDvpY-lqE9DGmpk2GAeBhadZwE0NX1q_DwqPTB-E-iq2o2TtICMCpcoUjgeydFiPXSBFeREHab85-CrKZkT8KQzU3MUNHCBCp2AQ6V2bXaE97kFClw7IdjyfYyncRtQskUpwN1bXYby47e1LGH5sVFA4h7cjn943M"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-secondary tracking-tight leading-none">Vatapi</span><span class="font-label-sm text-label-sm text-outline tracking-wider uppercase">Bagalkote Heritage AI</span></div></a></div><nav class="hidden xl:flex items-center gap-space-xs" data-active-classes="bg-surface-container-high text-primary font-title-md rounded-lg"><a class="px-space-xs py-1.5 rounded-lg font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="home" href="#">Home</a><a class="px-space-xs py-1.5 rounded-lg font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="heritage-watch" href="#">Heritage Watch</a><a class="px-space-xs py-1.5 rounded-lg font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="ooru-oota" href="#">Ooru Oota</a><a class="px-space-xs py-1.5 rounded-lg font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="circuit-planner" href="#">Circuit Planner</a><a class="px-space-xs py-1.5 rounded-lg font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="public-ledger" href="#">Public Ledger</a><a class="px-space-xs py-1.5 rounded-lg font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="about" href="#">About</a></nav><div class="flex items-center gap-space-sm shrink-0"><div class="hidden sm:flex items-center gap-1.5 px-space-xs py-1 rounded-full bg-surface-container text-on-surface-variant"><span class="material-symbols-outlined text-[16px] text-primary">location_on</span><span class="font-label-md text-label-md font-medium text-on-surface">Bagalkote District</span></div><button class="px-space-xs py-1 rounded-lg bg-surface-container text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md tracking-wider" type="button">KN | EN</button><a class="inline-flex items-center gap-1 px-space-sm py-2 rounded-lg bg-primary text-on-primary hover:bg-primary-container font-title-md text-title-md shadow-sm transition-all" data-path="heritage-watch" href="#"><span class="material-symbols-outlined text-[18px]">add</span><span>Report an Issue</span></a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Hero Section -->
+<section class="relative w-full -mt-20 overflow-hidden bg-on-secondary-fixed">
+<!-- Hero Background Image & Layered Tint Overlays -->
+<div class="absolute inset-0 z-0">
+<img alt="Master weaver working on a traditional handloom in Bagalkote" class="w-full h-full object-cover object-center opacity-70 filter saturate-[1.1] brightness-[0.85]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXV0s2UeSSnY6Zfjfgrn3G2PQcERtmWGmo2YZgIZSF1gT0nQUYWXCjw91fMLHSHQ8qBFRhFh4FTc76d9mXKRBocglVtek4lvMGznGRWiIzMu-p89hd9k8lSz4oxrKOVG5B07dWBFY_PkIIFCblU0TXiQKGfcgmydCdmyS7_no4qRnRslJfo9Ej2g64lfm269I3j68lJ1jIMlEJ-ZFidog89KK2q0lsFyJQsOCZdY9sGSwJ1NVSWI3Y"/>
+<div class="absolute inset-0 bg-gradient-to-t from-on-secondary-fixed via-secondary/70 to-secondary/40 mix-blend-multiply"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-on-secondary-fixed via-on-secondary-fixed/80 to-transparent"></div>
+</div>
+<!-- Hero Content -->
+<div class="relative z-10 max-w-7xl mx-auto px-margin lg:px-margin-desktop pt-36 pb-space-2xl flex flex-col justify-end min-h-[580px]">
+<div class="max-w-3xl flex flex-col gap-space-sm">
+<!-- Overline Tag -->
+<div class="inline-flex items-center gap-space-xs self-start px-space-sm py-1 rounded-full bg-surface/15 backdrop-blur-md text-primary-fixed border border-primary-fixed/20 shadow-sm">
+<span class="material-symbols-outlined text-[16px] text-primary-fixed" style="font-variation-settings: 'FILL' 1;">qr_code_2</span>
+<span class="font-label-md text-label-md tracking-widest uppercase text-surface-bright">Artisans of the Malaprabha Basin</span>
+</div>
+<!-- Main Headline -->
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-surface-bright tracking-tight leading-tight">
+          Meet the Weavers of Bagalkote
+        </h1>
+<!-- Subheadline -->
+<p class="font-body-lg text-body-lg text-surface-container-high max-w-2xl font-normal leading-relaxed">
+          Empowering a 400-year-old weave through AI and fair tourism. Direct access to pit-loom masters in Guledgudda, Ilkal, and Badami without middlemen.
+        </p>
+<!-- Stats Metric Badges -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-sm mt-space-md pt-space-md border-t border-surface/20">
+<div class="flex items-center gap-space-xs p-space-xs rounded-lg bg-surface/10 backdrop-blur-sm">
+<span class="material-symbols-outlined text-primary-fixed text-[22px]">precision_manufacturing</span>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-surface-bright font-semibold">400+ Looms</span>
+<span class="font-label-sm text-label-sm text-surface-variant">Guledgudda &amp; Ilkal Hubs</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs p-space-xs rounded-lg bg-surface/10 backdrop-blur-sm">
+<span class="material-symbols-outlined text-primary-fixed text-[22px]">payments</span>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-surface-bright font-semibold">100% Value</span>
+<span class="font-label-sm text-label-sm text-surface-variant">Direct-to-Artisan Escrow</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs p-space-xs rounded-lg bg-surface/10 backdrop-blur-sm">
+<span class="material-symbols-outlined text-primary-fixed text-[22px]">verified</span>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-surface-bright font-semibold">GI Certified</span>
+<span class="font-label-sm text-label-sm text-surface-variant">Registry Tag #GI-218</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 2: Weaver Profiles -->
+<section class="w-full max-w-7xl mx-auto px-margin lg:px-margin-desktop py-space-2xl">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md mb-space-lg">
+<div class="flex flex-col gap-1">
+<span class="font-label-md text-label-md text-secondary tracking-widest uppercase">Verified Pit-Loom Keepers</span>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface font-semibold">
+          Master Weavers of the Malaprabha Basin
+        </h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+          Reserve live studio visits, observe intricate warp threading, and commission custom yardage directly.
+        </p>
+</div>
+<!-- Action pill count -->
+<div class="hidden lg:flex items-center gap-2 px-space-sm py-1.5 rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md">
+<span class="inline-block w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span>18 Looms Actively Hosting Today</span>
+</div>
+</div>
+<!-- Filter Buttons -->
+<div class="flex flex-wrap items-center gap-space-xs pb-space-lg" id="filter-container">
+<button class="filter-btn active-filter px-space-sm py-2 rounded-lg bg-secondary text-on-secondary font-title-md text-title-md shadow-sm transition-all flex items-center gap-1.5" data-filter="all" type="button">
+<span class="material-symbols-outlined text-[16px]">apps</span> All Clusters
+      </button>
+<button class="filter-btn px-space-sm py-2 rounded-lg bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors font-title-md text-title-md flex items-center gap-1.5" data-filter="khana" type="button">
+        Guledgudda Khana
+      </button>
+<button class="filter-btn px-space-sm py-2 rounded-lg bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors font-title-md text-title-md flex items-center gap-1.5" data-filter="ilkal" type="button">
+        Ilkal Kasuti Borders
+      </button>
+<button class="filter-btn px-space-sm py-2 rounded-lg bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors font-title-md text-title-md flex items-center gap-1.5" data-filter="indigo" type="button">
+        Natural Indigo Vats
+      </button>
+<button class="filter-btn px-space-sm py-2 rounded-lg bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors font-title-md text-title-md flex items-center gap-1.5" data-filter="masters" type="button">
+        Master Weavers
+      </button>
+</div>
+<!-- 3-Column Profile Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-lg">
+<!-- Card 1: Shivalingappa Pattanshetti -->
+<article class="bg-surface-container-lowest rounded-xl shadow-md overflow-hidden flex flex-col justify-between hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+<div>
+<!-- Thumbnail & GI Floating Badge -->
+<div class="relative h-64 w-full overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" data-alt="Close portrait of senior Indian master weaver Shivalingappa wearing a traditional white turban in front of a wooden pit loom filled with crimson and golden silk threads in Guledgudda, warm natural cinematic sidelight, sandstone architecture background, 8k documentary photograph" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwL00CwxS6x0uXUPQpsJy3FylFyQscpYe-vcdX8KLtSn3RKmoXizTlsPNjy11gdQJZjYhB8MEiVJTOu1lKXSL-uJJ9-8IsqLjHzxmZxChLaQ01TEwK_bSu5SILP5-bXUsKIiI9NRrvtGKxd7HOUqsWC8Ef-24Je9qjhTHCZBJSPoYixaRIMopKxmGvQDWQ0YxFeyLLnHEdaSE907-U8PmTk5iVjsesCzcRcBhdjihkHndSRx41OjIY"/>
+<div class="absolute top-3 right-3 px-space-xs py-1 rounded-full bg-primary text-on-primary flex items-center gap-1 shadow-md">
+<span class="material-symbols-outlined text-[14px]">verified</span>
+<span class="font-label-sm text-label-sm tracking-wider uppercase font-semibold">GI Verified</span>
+</div>
+<div class="absolute bottom-3 left-3 px-space-xs py-0.5 rounded bg-on-surface/80 backdrop-blur-sm text-surface-bright font-label-sm text-label-sm">
+              Cluster: Guledgudd Central
+            </div>
+</div>
+<!-- Card Content Body -->
+<div class="p-space-md flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-secondary font-semibold uppercase tracking-wider">Khana Silk &amp; Choli Weaves</span>
+<span class="font-label-sm text-label-sm text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary">star</span> 4.98 (84 visits)
+              </span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Shivalingappa Pattanshetti</h3>
+<p class="font-body-md text-body-md text-on-surface-variant font-medium">5th Generation Khana Master • Guledgudd Cluster</p>
+<div class="mt-space-xs pt-space-xs border-t border-surface-container flex flex-col gap-1.5">
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-secondary mt-0.5">spa</span>
+<span class="font-body-md text-body-md text-on-surface-variant"><strong class="text-on-surface">Provenance:</strong> Handspun Mulberry Silk • Traditional Pit Loom</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary">schedule</span>
+<span class="font-body-md text-body-md text-primary font-semibold">Today, 03:30 PM <span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded bg-primary-fixed text-on-primary-fixed ml-1">2 slots open</span></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Card Footer / Button -->
+<div class="p-space-md pt-0">
+<button class="w-full py-3 px-space-md rounded-lg bg-primary hover:bg-primary-container text-on-primary font-title-md text-title-md flex items-center justify-center gap-2 shadow-sm transition-all group" type="button">
+<span>Book Loom Visit</span>
+<span class="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1">arrow_forward</span>
+</button>
+</div>
+</article>
+<!-- Card 2: Kasturbai Ilkal -->
+<article class="bg-surface-container-lowest rounded-xl shadow-md overflow-hidden flex flex-col justify-between hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+<div>
+<!-- Thumbnail & GI Floating Badge -->
+<div class="relative h-64 w-full overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" data-alt="Portrait of an Indian elderly woman artisan Kasturbai smiling gently, draped in an authentic red and indigo Ilkal saree with Kasuti embroidery borders, seated gracefully before a massive warp beam in an earth-toned workshop in Ilkal Karnataka, soft ambient morning window light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtfWpKfd5F-EBjjAHOEplpSykuvP_RWwGT-Jbs38H3Jbv6rUdOWDWKnh9Pph1tRxonZoo3DQBPWkSqSIbnrjoudb_zqfwHzgxC7z49yRG7YYP1w_M6UYpVsR8-0fjbj8W8K5MzRDghbspaTdDI05AN3adYSi447vhZKutawVosoTdIo1b3lf8bZXWUv_sg_OgF9JkkNxDPgHdOdVo5FBYl2YRO5tAdpBo4VgasLQbntLJmAVA5t4jm"/>
+<div class="absolute top-3 right-3 px-space-xs py-1 rounded-full bg-primary text-on-primary flex items-center gap-1 shadow-md">
+<span class="material-symbols-outlined text-[14px]">verified</span>
+<span class="font-label-sm text-label-sm tracking-wider uppercase font-semibold">GI Verified</span>
+</div>
+<div class="absolute bottom-3 left-3 px-space-xs py-0.5 rounded bg-on-surface/80 backdrop-blur-sm text-surface-bright font-label-sm text-label-sm">
+              Cluster: Ilkal Weavers Colony
+            </div>
+</div>
+<!-- Card Content Body -->
+<div class="p-space-md flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-secondary font-semibold uppercase tracking-wider">Tope Teni Pallu &amp; Kasuti Embroidery</span>
+<span class="font-label-sm text-label-sm text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary">star</span> 5.0 (126 visits)
+              </span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Kasturbai Ilkal</h3>
+<p class="font-body-md text-body-md text-on-surface-variant font-medium">National Awardee • Ilkal Chebi Weave</p>
+<div class="mt-space-xs pt-space-xs border-t border-surface-container flex flex-col gap-1.5">
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-secondary mt-0.5">account_tree</span>
+<span class="font-body-md text-body-md text-on-surface-variant"><strong class="text-on-surface">Provenance:</strong> Geometrical Temple Border • 8,000 Warp Ends</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary">schedule</span>
+<span class="font-body-md text-body-md text-primary font-semibold">Tomorrow, 10:00 AM <span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface-variant ml-1">Private Demo</span></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Card Footer / Button -->
+<div class="p-space-md pt-0">
+<button class="w-full py-3 px-space-md rounded-lg bg-primary hover:bg-primary-container text-on-primary font-title-md text-title-md flex items-center justify-center gap-2 shadow-sm transition-all group" type="button">
+<span>Book Loom Visit</span>
+<span class="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1">arrow_forward</span>
+</button>
+</div>
+</article>
+<!-- Card 3: Mallikarjun Badami -->
+<article class="bg-surface-container-lowest rounded-xl shadow-md overflow-hidden flex flex-col justify-between hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+<div>
+<!-- Thumbnail & GI Floating Badge -->
+<div class="relative h-64 w-full overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" data-alt="Portrait of Mallikarjun Badami, a 45-year-old passionate textile revivalist with indigo dyed hands holding up naturally dyed terracotta red thread skeins in a rustic open courtyard studio with Badami sandstone cliffs visible in the soft blur background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKnYWnOLVJrSEuW5RjRAwWCNnFhIeLPrjvvYgBDzD4TtIMp_NrkvPWt1vCycekrmqYCxXKoo2Y-Wc8h72BES7uwq7aw43SuSidjHas4AvLPVcZPbLMfmiqdpzDUtlPxxpTvWvg_cdEb6IXAFBStMRy6b_kHWXacXmQOWXyiAOOlrFP3A6RnTvphfMvmqn_JT--nI0CTjxae1R3vlzvl4Q2lxcz2UxM8mDHhA0SxNxZamWql-2_83Pq"/>
+<div class="absolute top-3 right-3 px-space-xs py-1 rounded-full bg-primary text-on-primary flex items-center gap-1 shadow-md">
+<span class="material-symbols-outlined text-[14px]">verified</span>
+<span class="font-label-sm text-label-sm tracking-wider uppercase font-semibold">GI Verified</span>
+</div>
+<div class="absolute bottom-3 left-3 px-space-xs py-0.5 rounded bg-on-surface/80 backdrop-blur-sm text-surface-bright font-label-sm text-label-sm">
+              Cluster: Agastya Lake West
+            </div>
+</div>
+<!-- Card Content Body -->
+<div class="p-space-md flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-secondary font-semibold uppercase tracking-wider">Pure Sandstone Terracotta &amp; Indigo</span>
+<span class="font-label-sm text-label-sm text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary">star</span> 4.92 (57 visits)
+              </span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Mallikarjun Badami</h3>
+<p class="font-body-md text-body-md text-on-surface-variant font-medium">Vatapi Revivalist • Organic Dye Guild</p>
+<div class="mt-space-xs pt-space-xs border-t border-surface-container flex flex-col gap-1.5">
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-secondary mt-0.5">science</span>
+<span class="font-body-md text-body-md text-on-surface-variant"><strong class="text-on-surface">Provenance:</strong> Non-mechanized Jacquard • 100% Organic Pomegranate Dye</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary">schedule</span>
+<span class="font-body-md text-body-md text-primary font-semibold">Tomorrow, 02:00 PM <span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded bg-primary-fixed text-on-primary-fixed ml-1">Open Studio</span></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Card Footer / Button -->
+<div class="p-space-md pt-0">
+<button class="w-full py-3 px-space-md rounded-lg bg-primary hover:bg-primary-container text-on-primary font-title-md text-title-md flex items-center justify-center gap-2 shadow-sm transition-all group" type="button">
+<span>Book Loom Visit</span>
+<span class="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1">arrow_forward</span>
+</button>
+</div>
+</article>
+</div>
+</section>
+<!-- Section 3: AI Design Assist Tool ("Chitra-Sutra AI") -->
+<section class="w-full bg-surface-container-low py-space-2xl">
+<div class="max-w-7xl mx-auto px-margin lg:px-margin-desktop">
+<!-- Section Title & Subheading -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md mb-space-xl">
+<div class="flex flex-col gap-1 max-w-2xl">
+<div class="inline-flex items-center gap-1.5 px-space-xs py-1 rounded-full bg-primary/10 text-primary self-start font-label-md text-label-md">
+<span class="material-symbols-outlined text-[16px]">auto_awesome</span>
+<span>Generative Heritage Transmutation</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface font-semibold">
+            Chitra-Sutra AI: Motif-to-Loom Translation
+          </h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+            Capture a rock-cut relief from Badami Cave 1 or Pattadakal friezes. Our neural weaver pipeline adapts the carvings into authentic warp/weft matrices calibrated for local pit-looms.
+          </p>
+</div>
+<!-- Algorithm status badge -->
+<div class="flex items-center gap-2 bg-surface-container-lowest px-space-sm py-2 rounded-lg shadow-sm">
+<span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+<span class="font-label-md text-label-md text-on-surface font-medium">Model: Chitra-Sutra-v2.4 (Fine-tuned on 1,400 Chalukya Steles)</span>
+</div>
+</div>
+<!-- Split Layout Workspace -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<!-- Left Side: Motif Upload / Active Motif Box (5 Cols) -->
+<div class="lg:col-span-5 flex flex-col gap-space-md">
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-md flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<h3 class="font-title-lg text-title-lg text-on-surface font-semibold flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">camera</span>
+<span>Active Motif Source</span>
+</h3>
+<span class="font-label-sm text-label-sm text-primary uppercase font-bold tracking-wider">Rasterized CAD</span>
+</div>
+<!-- Upload Area & Loaded Preview -->
+<div class="relative rounded-lg p-space-md bg-surface-container-low flex flex-col items-center justify-center text-center group cursor-pointer">
+<!-- Visual of active motif extracted -->
+<div class="w-full h-48 rounded-lg overflow-hidden bg-surface-container relative mb-space-sm flex items-center justify-center">
+<img class="w-full h-full object-cover filter contrast-125" data-alt="Detailed macro architectural relief photo of Badami Cave 1 rock-cut Nataraja with celestial flying Gandharva attendants, carved in coarse red sandstone, warm sunbeams illuminating relief details, isolated architectural archival vector trace style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAY48nAfns5AlI0hE6QlfaH5c_0k1GN2JBcaoME10mQ2Yp3cwtBnPtF_DolrBY2Nb2c_cptoArNrFWUUrVwScXEDfW9Uuzq-Yf7a_RQtXP9fps0xxhGigmFgw1hYEyR0SSMsFH4rhknD0qWvDd9fx3_i4Lj5kYVvIksGiEpFpSmVNPyV0ijz75zOjciBnrUUug3M-y2kdR21D2-22U2a6KfzGzWKYAuhjmOzCZ9UdIQNKyBjNPnu6Jx"/>
+<div class="absolute inset-0 bg-primary/10 mix-blend-color"></div>
+<div class="absolute bottom-2 left-2 right-2 px-2 py-1 rounded bg-on-surface/85 backdrop-blur-sm text-surface-bright font-label-sm text-label-sm flex items-center justify-between">
+<span class="truncate">Cave 1 Nataraja Flying Gandharva</span>
+<span class="text-primary-fixed font-mono shrink-0">#CHALUKYA-89</span>
+</div>
+</div>
+<div class="flex flex-col items-center gap-1">
+<p class="font-title-md text-title-md text-on-surface font-medium">Drop Relief Photograph or Vector File</p>
+<p class="font-label-sm text-label-sm text-outline">Supports PNG, SVG, JPG, DXF up to 35MB</p>
+</div>
+<button class="mt-space-sm px-space-sm py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-title-md text-title-md transition-colors inline-flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-[16px]">upload_file</span>
+<span>Replace Motif Image</span>
+</button>
+</div>
+<!-- Warp & Weft Specifications -->
+<div class="grid grid-cols-2 gap-space-sm pt-space-xs">
+<div class="p-space-xs rounded-lg bg-surface-container">
+<span class="font-label-sm text-label-sm text-outline uppercase">Computed Warp Density</span>
+<p class="font-title-md text-title-md text-on-surface font-semibold">120 Ends / Inch</p>
+</div>
+<div class="p-space-xs rounded-lg bg-surface-container">
+<span class="font-label-sm text-label-sm text-outline uppercase">Loom Compatibility</span>
+<p class="font-title-md text-title-md text-secondary font-semibold">Khana 4-Shaft Pit</p>
+</div>
+</div>
+</div>
+<!-- Cooperative Certification Banner -->
+<div class="p-space-md rounded-xl bg-tertiary-fixed text-on-tertiary-fixed flex items-center gap-space-sm shadow-sm">
+<span class="material-symbols-outlined text-[28px] text-secondary">verified_user</span>
+<div class="flex flex-col">
+<h4 class="font-title-md text-title-md font-semibold">ASI &amp; Cooperative Royalty Agreement</h4>
+<p class="font-body-md text-body-md text-on-tertiary-fixed-variant leading-snug">
+                Every generated artifact allocates a 3% archival preservation cess back to the Badami Monument Maintenance Trust.
+              </p>
+</div>
+</div>
+</div>
+<!-- Right Side: AI Generated Tourist Products (7 Cols) -->
+<div class="lg:col-span-7 bg-surface-container-lowest p-space-lg rounded-xl shadow-md flex flex-col gap-space-md">
+<div class="flex items-center justify-between pb-space-xs border-b border-surface-container">
+<div>
+<span class="font-label-sm text-label-sm text-primary uppercase font-bold tracking-wider">Neural Generation Output</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Suggested Tourist Artifacts</h3>
+</div>
+<div class="flex items-center gap-1 font-label-md text-label-md text-outline">
+<span>Auto-refresh</span>
+<span class="material-symbols-outlined text-[18px] text-primary">sync</span>
+</div>
+</div>
+<!-- Suggested Product Cards Array -->
+<div class="flex flex-col gap-space-md">
+<!-- Product 1: Pure Khana Stoles -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex flex-col sm:flex-row items-center gap-space-md hover:bg-surface-container transition-all">
+<div class="w-full sm:w-36 h-36 rounded-lg overflow-hidden shrink-0 bg-surface-container-high relative">
+<img class="w-full h-full object-cover" data-alt="Pure silk Khana stole draped over a sandstone carved railing with rich rust orange, dark indigo and antique gold thread embroidery showing Badami winged apsara motifs, tactile textile macro shot" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAiTYAiamGS7Bl0pEXY66ma-UT5uuP6Almb6WLVgwavIu2VZqGCVwJ6QL-YVA5f9CJVy2iHRzvn1rWrMqxXzEXQeQF8zpIv4QkqcLkm2F884MdQDoxG0CLmoby9Gwi7SjtTb67junnDvH29ywa7YUP8bPwCaCigYisnzNGOxzxxd0Mlz-GGHU9hi1KiZ2KoQMyIH7mGh6vqsr1cohIISjIvyws2GR0hWggOPik-Xvke-Yft7uKK9RRC"/>
+<span class="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-primary text-on-primary font-label-sm text-label-sm font-semibold">Best Seller</span>
+</div>
+<div class="flex flex-col justify-between w-full h-full gap-2">
+<div>
+<div class="flex items-center justify-between">
+<h4 class="font-title-lg text-title-lg text-on-surface font-bold">Pure Khana Silk Stole</h4>
+<span class="font-title-lg text-title-lg text-secondary font-bold">₹3,200</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">
+                    100% natural Mulberry silk with zari borders featuring the Gandharva frieze.
+                  </p>
+</div>
+<div class="flex flex-wrap items-center justify-between gap-2 pt-space-xs border-t border-outline-variant/30">
+<div class="flex items-center gap-1.5 text-primary">
+<span class="material-symbols-outlined text-[18px]">handshake</span>
+<span class="font-label-md text-label-md font-semibold text-primary">₹1,850 direct wage per stole</span>
+</div>
+<button class="px-space-sm py-1.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-title-md text-title-md transition-colors flex items-center gap-1" type="button">
+<span>Commission Piece</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product 2: Artisanal Dupattas -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex flex-col sm:flex-row items-center gap-space-md hover:bg-surface-container transition-all">
+<div class="w-full sm:w-36 h-36 rounded-lg overflow-hidden shrink-0 bg-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="Artisanal handwoven Ilkal dupatta draped gracefully with distinct Tope Teni red pallu and Kasuti embroidered Badami flying temple motifs, warm natural sunlight in heritage courtyard" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDU2E1EntdhiAkx-ifPepiqKRQirG4Bqrx8UuWFk11_N9Ji4nYHrknekQaRxZ3IkQaqs49a472uH3Ig_pYx1ZX63VClZH1zwQZETalqIYM48eRfoLTeIWvNNlJHeeY09ffGH0aHuxU_McIHLlQXVE2MO2l6oBJxBE05bZuPFM_-A9_LeHEBk36POCqQxSwFYuqQ60scmKZ12-m-KvZcLAv2buyTo_qxLT8yFM-X9WKKki6_ErAhlUEF"/>
+</div>
+<div class="flex flex-col justify-between w-full h-full gap-2">
+<div>
+<div class="flex items-center justify-between">
+<h4 class="font-title-lg text-title-lg text-on-surface font-bold">Artisanal Kasuti Dupatta</h4>
+<span class="font-title-lg text-title-lg text-secondary font-bold">₹4,800</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">
+                    Classic Ilkal red Tope Teni pallu infused with Gandharva medallion centerpieces.
+                  </p>
+</div>
+<div class="flex flex-wrap items-center justify-between gap-2 pt-space-xs border-t border-outline-variant/30">
+<div class="flex items-center gap-1.5 text-primary">
+<span class="material-symbols-outlined text-[18px]">handshake</span>
+<span class="font-label-md text-label-md font-semibold text-primary">₹2,900 direct wage per dupatta</span>
+</div>
+<button class="px-space-sm py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-title-md text-title-md transition-colors flex items-center gap-1" type="button">
+<span>Commission Piece</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product 3: Framed Textile Heirlooms -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex flex-col sm:flex-row items-center gap-space-md hover:bg-surface-container transition-all">
+<div class="w-full sm:w-36 h-36 rounded-lg overflow-hidden shrink-0 bg-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="High-end framed museum grade woven textile wall art piece showcasing Badami temple bas-relief in deep indigo and madder red natural dye threads, displayed on a minimalist gallery wall" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcTaGGscogaLxjtq20cZ5kRnnbzuZD5SmINDLk_xNqG6CbDXY6OBllb10eFMDwreuCUrAbC0kfIeI7GYzcswjBJN6Nr7q1YASXP1mMrrHrG_IfMvk8a3huDU1vKB_aNxt9bVnk2S2Eh5c3x--gdnN1HIKLzB3d2E72Fq9ZtLyJD5gdP9ztlYQzytV0bksp9LkJ31Re3O7EeIu37-kEec9LOXGGrQfCRRfKsAgtydtIob8uj1k2oH5s"/>
+</div>
+<div class="flex flex-col justify-between w-full h-full gap-2">
+<div>
+<div class="flex items-center justify-between">
+<h4 class="font-title-lg text-title-lg text-on-surface font-bold">Framed Textile Heirloom</h4>
+<span class="font-title-lg text-title-lg text-secondary font-bold">₹7,500</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">
+                    Museum-grade framed 24x24 tapestry woven with 100% organic indigo &amp; pomegranate.
+                  </p>
+</div>
+<div class="flex flex-wrap items-center justify-between gap-2 pt-space-xs border-t border-outline-variant/30">
+<div class="flex items-center gap-1.5 text-primary">
+<span class="material-symbols-outlined text-[18px]">handshake</span>
+<span class="font-label-md text-label-md font-semibold text-primary">₹4,800 direct wage per panel</span>
+</div>
+<button class="px-space-sm py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-title-md text-title-md transition-colors flex items-center gap-1" type="button">
+<span>Commission Piece</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 4: Fair-Price Breakdown (Decentralized Heritage Ledger) -->
+<section class="w-full max-w-7xl mx-auto px-margin lg:px-margin-desktop py-space-2xl">
+<div class="bg-surface-container-lowest rounded-2xl shadow-xl p-space-lg md:p-space-xl flex flex-col gap-space-lg">
+<!-- Title & Context -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md border-b border-surface-container pb-space-lg">
+<div class="flex flex-col gap-1">
+<div class="inline-flex items-center gap-1.5 text-primary font-label-md text-label-md uppercase tracking-wider font-semibold">
+<span class="material-symbols-outlined text-[16px]">account_balance_wallet</span>
+<span>Decentralized Heritage Ledger</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface font-semibold">
+            Fair-Price Breakdown: Where Does Your ₹3,200 Go?
+          </h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+            Example: Standard 2-meter Handspun Guledgudda Khana Stole purchased through Vatapi.
+          </p>
+</div>
+<div class="flex items-center gap-space-xs px-space-md py-2 rounded-xl bg-surface-container-low shrink-0">
+<span class="material-symbols-outlined text-primary text-[24px]">lock</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline">Smart Contract Escrow</span>
+<span class="font-mono text-label-md text-label-md text-on-surface font-bold">KT-HERITAGE-7890</span>
+</div>
+</div>
+</div>
+<!-- Horizontal Stacked Visual Bar -->
+<div class="flex flex-col gap-space-xs">
+<div class="w-full h-8 rounded-full overflow-hidden flex bg-surface-container">
+<!-- Weaver Direct Wage (64%) -->
+<div class="h-full bg-primary flex items-center justify-center text-on-primary font-label-md text-label-md font-bold transition-all hover:opacity-90" style="width: 64%;" title="Weaver Direct Wage: 64%">
+            64%
+          </div>
+<!-- Raw Materials (25%) -->
+<div class="h-full bg-secondary flex items-center justify-center text-on-secondary font-label-md text-label-md font-bold transition-all hover:opacity-90" style="width: 25%;" title="Raw Materials: 25%">
+            25%
+          </div>
+<!-- CAD Digitize (6%) -->
+<div class="h-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container font-label-md text-label-md font-bold transition-all hover:opacity-90" style="width: 6%;" title="Design Assist &amp; CAD Digitize: 6%">
+            6%
+          </div>
+<!-- Platform & Coop Fund (5%) -->
+<div class="h-full bg-outline flex items-center justify-center text-surface-bright font-label-md text-label-md font-bold transition-all hover:opacity-90" style="width: 5%;" title="Platform &amp; Coop Fund: 5%">
+            5%
+          </div>
+</div>
+<!-- Legend Bar -->
+<div class="flex flex-wrap items-center justify-between text-label-sm font-label-sm text-outline gap-2 px-1">
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded-full bg-primary inline-block"></span>
+<span>Weaver Direct Wage</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded-full bg-secondary inline-block"></span>
+<span>Raw Silk &amp; Zari</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded-full bg-tertiary-container inline-block"></span>
+<span>CAD Assist</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded-full bg-outline inline-block"></span>
+<span>Coop Reserve</span>
+</div>
+</div>
+</div>
+<!-- Detailed Breakdown Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<!-- Card 1: Weaver's Direct Wage -->
+<div class="p-space-md rounded-xl bg-primary-fixed/20 border-2 border-primary/20 flex flex-col justify-between gap-space-sm relative">
+<span class="absolute -top-3 right-3 px-space-xs py-0.5 rounded-full bg-primary text-on-primary font-label-sm text-label-sm font-semibold tracking-wide">
+            Largest Share Guaranteed
+          </span>
+<div>
+<span class="font-label-sm text-label-sm text-primary uppercase font-bold tracking-wider">Artisan Core</span>
+<h4 class="font-title-lg text-title-lg text-on-surface font-bold mt-1">Weaver's Direct Wage</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">
+              Paid directly to the artisan's linked Aadhaar UPI account instantly upon loom output logging.
+            </p>
+</div>
+<div class="flex items-baseline justify-between pt-space-xs border-t border-primary/10">
+<span class="font-headline-sm text-headline-sm text-primary font-bold">₹2,050</span>
+<span class="font-title-md text-title-md text-on-surface font-semibold">64%</span>
+</div>
+</div>
+<!-- Card 2: Raw Materials -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex flex-col justify-between gap-space-sm">
+<div>
+<span class="font-label-sm text-label-sm text-secondary uppercase font-bold tracking-wider">Provenance Sourcing</span>
+<h4 class="font-title-lg text-title-lg text-on-surface font-bold mt-1">Raw Materials</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">
+              Pure Mulberry handspun silk skeins, Karnataka Sericulture Board certified, and genuine silver-tested Zari.
+            </p>
+</div>
+<div class="flex items-baseline justify-between pt-space-xs border-t border-surface-container">
+<span class="font-headline-sm text-headline-sm text-secondary font-bold">₹800</span>
+<span class="font-title-md text-title-md text-on-surface-variant font-semibold">25%</span>
+</div>
+</div>
+<!-- Card 3: Design Assist & CAD Digitize -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex flex-col justify-between gap-space-sm">
+<div>
+<span class="font-label-sm text-label-sm text-outline uppercase font-bold tracking-wider">Tech Infrastructure</span>
+<h4 class="font-title-lg text-title-lg text-on-surface font-bold mt-1">Design Assist &amp; CAD</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">
+              Motif vectorization, optical card punching calculations, and local cooperative digital kiosk upkeep.
+            </p>
+</div>
+<div class="flex items-baseline justify-between pt-space-xs border-t border-surface-container">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">₹200</span>
+<span class="font-title-md text-title-md text-on-surface-variant font-semibold">6%</span>
+</div>
+</div>
+<!-- Card 4: Platform & Cooperative Fund -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex flex-col justify-between gap-space-sm">
+<div>
+<span class="font-label-sm text-label-sm text-outline uppercase font-bold tracking-wider">Community Reserve</span>
+<h4 class="font-title-lg text-title-lg text-on-surface font-bold mt-1">Platform &amp; Coop Fund</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">
+              Guledgudda Weavers' Welfare Society pension pool and student apprentice training stipends.
+            </p>
+</div>
+<div class="flex items-baseline justify-between pt-space-xs border-t border-surface-container">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">₹150</span>
+<span class="font-title-md text-title-md text-on-surface-variant font-semibold">5%</span>
+</div>
+</div>
+</div>
+<!-- Blockchain & Ledger Certification Footer Note -->
+<div class="p-space-sm rounded-lg bg-surface-container flex flex-col sm:flex-row items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[20px]">policy</span>
+<span class="font-body-md text-body-md text-on-surface">
+            Immutable blockchain timestamp on Karnataka Heritage Ledger. Zero middleman commission.
+          </span>
+</div>
+<a class="font-title-md text-title-md text-primary hover:text-primary-container inline-flex items-center gap-1 font-semibold" href="#">
+<span>Verify on Ledger Explorer</span>
+<span class="material-symbols-outlined text-[16px]">open_in_new</span>
+</a>
+</div>
+</div>
+</section>
+<!-- Interactive Filter Behavior -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterButtons.forEach(b => {
+            b.classList.remove('bg-secondary', 'text-on-secondary', 'shadow-sm');
+            b.classList.add('bg-surface-container', 'text-on-surface-variant');
+          });
+          btn.classList.remove('bg-surface-container', 'text-on-surface-variant');
+          btn.classList.add('bg-secondary', 'text-on-secondary', 'shadow-sm');
+        });
+      });
+    });
+  </script>
+</div></main><footer class="w-full bg-surface-container-low mt-space-2xl"><div class="max-w-7xl mx-auto px-margin lg:px-margin-desktop py-space-xl"><div class="flex flex-col md:flex-row items-center justify-between gap-space-md"><div class="flex flex-col items-center md:items-start gap-1"><div class="flex items-center gap-space-xs"><span class="font-headline-sm text-headline-sm text-secondary">Vatapi</span><span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Civic AI &amp; Heritage Grid</span></div><p class="font-body-md text-body-md text-on-surface-variant">Protecting Chalukya monumentality, empowering local civic stewardship in Bagalkote District.</p></div><div class="flex items-center gap-space-md font-body-md text-body-md text-on-surface-variant"><a class="hover:text-on-surface transition-colors" data-path="heritage-watch" href="#">Civic Portal</a><a class="hover:text-on-surface transition-colors" data-path="circuit-planner" href="#">AI Routes</a><a class="hover:text-on-surface transition-colors" data-path="public-ledger" href="#">Open Data</a><a class="hover:text-on-surface transition-colors" data-path="about" href="#">Chalukya Archives</a></div></div><div class="mt-space-lg pt-space-md flex flex-col sm:flex-row items-center justify-between gap-space-sm font-label-sm text-label-sm text-outline"><p>© 2025 Vatapi Platform • Bagalkote District Administration &amp; Heritage Directorate.</p><p>Crafted in Badami Red Sandstone Aesthetic.</p></div></div></footer></body></html>
