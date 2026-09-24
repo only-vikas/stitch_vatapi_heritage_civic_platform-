@@ -83,3 +83,176 @@
 ::-webkit-scrollbar-thumb:hover {
   background: var(--outline);
 }
+
+/* ══════════════════════════════════════════════════════════
+   CINEMATIC HERO  –  Scroll, Glass, Glow, Parallax
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Scroll indicator pulse line ─────────────────────── */
+@keyframes scroll-line {
+  0%   { height: 0%;    top: 0;    opacity: 1; }
+  60%  { height: 100%;  top: 0;    opacity: 1; }
+  100% { height: 100%;  top: 100%; opacity: 0; }
+}
+
+.animate-scroll-line {
+  animation: scroll-line 1.8s ease-in-out infinite;
+}
+
+/* ── Glass card light sheen ───────────────────────────── */
+.glass-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    180px circle at var(--shine-x, 50%) var(--shine-y, 30%),
+    rgba(255, 255, 255, 0.14),
+    transparent 80%
+  );
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 1;
+}
+
+.glass-card.glass-shine-active::before {
+  opacity: 1;
+}
+
+/* ── Hero CTA primary glow ────────────────────────────── */
+.hero-cta-primary {
+  box-shadow: 0 0 20px rgba(13, 148, 136, 0.35), 0 4px 14px rgba(0,0,0,0.25);
+  transition: box-shadow 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
+}
+
+.hero-cta-primary:hover {
+  box-shadow: 0 0 36px rgba(13, 148, 136, 0.60), 0 6px 24px rgba(0,0,0,0.30);
+  transform: translateY(-1px);
+}
+
+/* ── Navbar Vatapi wordmark glow (synced to cave pulse) ─ */
+@keyframes vatapi-glow {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(137, 245, 231, 0.30)); }
+  50%       { filter: drop-shadow(0 0 12px rgba(137, 245, 231, 0.70)); }
+}
+
+.vatapi-nav-logo {
+  animation: vatapi-glow 3s ease-in-out infinite;
+}
+
+/* ── Reduced-motion safety net ───────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .animate-scroll-line,
+  .boat-shadow,
+  .vatapi-nav-logo {
+    animation: none !important;
+    transition: none !important;
+  }
+  #curtain-top,
+  #curtain-bottom {
+    display: none !important;
+  }
+}
+
+/* ── Scrollbar hide (DiscoverStrip) ──────────────────────────── */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Card ripple effect ──────────────────────────────────────── */
+.vatapi-card-ripple {
+  position: relative;
+  overflow: hidden;
+}
+.vatapi-card-ripple::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--ripple-x, 50%) var(--ripple-y, 50%), rgba(0,104,95,0.12) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.vatapi-card-ripple:hover::after {
+  opacity: 1;
+}
+
+/* ── StatCounter number entrance ─────────────────────────────── */
+@keyframes stat-pop {
+  0%   { transform: scale(0.85); opacity: 0; }
+  70%  { transform: scale(1.06); }
+  100% { transform: scale(1);    opacity: 1; }
+}
+.stat-counter-value {
+  animation: stat-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* ── Discover strip card glow on hover ───────────────────────── */
+@keyframes discover-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* ── GlassCard dynamic light reflection (Prompt 3) ───────────── */
+.glass-card {
+  position: relative;
+  overflow: hidden;
+}
+.glass-card::before {
+  content: '';
+  position: absolute;
+  inset: -60%;
+  background: radial-gradient(
+    circle 320px at var(--shine-x, 50%) var(--shine-y, 50%),
+    rgba(255, 255, 255, 0.28),
+    rgba(137, 245, 231, 0.08) 40%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 1;
+}
+.glass-card.glass-shine-active::before {
+  opacity: 1;
+}
+
+/* ── Subtle pulsing halo for starting page sun/monument glow ── */
+@keyframes pulse-warm-glow {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.65;
+    transform: scale(1.08);
+  }
+}
+.animate-warm-glow {
+  animation: pulse-warm-glow 4s ease-in-out infinite;
+}
+
+/* ── Soft water drift for background ── */
+@keyframes subtle-drift {
+  0%, 100% {
+    transform: translateY(0px) scale(1.02);
+  }
+  50% {
+    transform: translateY(-8px) scale(1.035);
+  }
+}
+.animate-subtle-drift {
+  animation: subtle-drift 12s ease-in-out infinite;
+}
+

@@ -19,6 +19,7 @@ interface AuthContextType {
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any; data?: any }>;
   signUp: (email: string, password: string, username?: string, role?: string) => Promise<{ error: any; data?: any }>;
+  signInWithGoogle: () => Promise<{ error: any; data?: any }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -30,6 +31,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   signIn: async () => ({ error: 'Not initialized' }),
   signUp: async () => ({ error: 'Not initialized' }),
+  signInWithGoogle: async () => ({ error: 'Not initialized' }),
   signOut: async () => {},
   refreshProfile: async () => {},
 });
@@ -137,6 +139,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return result;
   };
 
+  const signInWithGoogle = async () => {
+    setLoading(true);
+    const redirectTo = typeof window !== 'undefined' ? `${window.location.origin}/home` : '';
+    const result = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo,
+      },
+    });
+    setLoading(false);
+    return result;
+  };
+
   const signOut = async () => {
     setLoading(true);
     await supabase.auth.signOut();
@@ -161,6 +176,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         loading,
         signIn,
         signUp,
+        signInWithGoogle,
         signOut,
         refreshProfile,
       }}

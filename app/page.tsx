@@ -1,825 +1,612 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
-import Navbar from '@/components/Navbar';
-import OllamaChatModal from '@/components/OllamaChatModal';
-import ReportIssueModal from '@/components/ReportIssueModal';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/context/AuthContext';
+import FloatingParticles from '@/components/FloatingParticles';
 
-interface IssueItem {
-  id: string;
-  category: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  jurisdiction: string;
-  status: 'reported' | 'in_review' | 'in_progress' | 'resolved' | 'closed';
-  title?: string;
-  description?: string;
-  photo_url?: string;
-  created_at: string;
-}
+/**
+ * VATAPI STARTING PAGE
+ *
+ * Full cinematic landing experience — 100vw × 100vh, no overflow.
+ * Contains ALL Prompt 1, 2, 3 animations:
+ *
+ * PROMPT 1 – Cinematic Load-In & Multi-Layer Parallax
+ *   ✅ Curtain split — terracotta screen with "Vatapi" wordmark splits top/bottom at 1.1s
+ *   ✅ 4-layer entrance — sky scales in (2s), town fades from bottom, lake opacity ramps, cliff slides from left
+ *   ✅ ScrollTrigger depth — cliff 0.3x, town 0.1x, sky 0.05x; hero text fades out
+ *   ✅ Cave glow — warm orange radial pulse (3s yoyo loop) over temple zone
+ *   ✅ Boat shadows — 3 tiny ellipses bob -3px on 6s sine loop, staggered 1.5s each
+ *   ✅ Sun flare — top-right radial breathes scale 1.05 over 8s
+ *   ✅ Water ripple — SVG feTurbulence seed increments every 180ms on lake layer
+ *   ✅ VIDEO background — Boats on Agastya Lake mp4 plays looped muted behind all layers
+ *
+ * PROMPT 2 – Ambient Micro-Interactions
+ *   ✅ GlassCard tilt — perspective(900px) rotates ±5° on cursor, light sheen tracks mouse
+ *   ✅ Teal CTA glow — Explore button emits teal shadow, intensifies on hover
+ *   ✅ Nav wordmark — "Vatapi" pulses with drop-shadow teal glow synced to 3s cave period
+ *   ✅ Scroll indicator — teal pulse line at bottom center
+ *   ✅ Lotus particles — Canvas2D Chalukyan lotus sprites float upward, terracotta-to-gold
+ *
+ * PROMPT 3 – Glassmorphic UI
+ *   ✅ Auth corner widget — frosted glass, Google Sign-In + Explore as Guest
+ *   ✅ Bottom gallery dock — 4 photos, drag scrollable, glassmorphic cards
+ *   ✅ Mouse-tilt GlassCard over the hero — dynamic light sheen
+ */
 
-interface FoodKitchen {
-  id: string;
-  name: string;
-  location: string;
-  distance: string;
-  dietary_tags: string[];
-  verified: boolean;
-  specialty_dish?: string;
-  rating?: number;
-}
-
-interface Weaver {
-  id: string;
-  name: string;
-  specialty: string;
-  gi_verified: boolean;
-  location?: string;
-  experience_years?: number;
-  loom_type?: string;
-}
-
-export default function Home() {
+export default function StartingPage() {
+  const router = useRouter();
   const { user } = useAuth();
 
-  // Modals state
-  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
-  const [isChatModalOpen, setIsChatModalOpen] = useState(false);
-  const [chatPromptPreload, setChatPromptPreload] = useState('');
+  const [curtainDone, setCurtainDone] = useState(false);
+  const [curtainOpening, setCurtainOpening] = useState(false);
+  const [authLoading, setAuthLoading] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
 
-  // Local Ollama interactive state for on-page widget (Step 4)
-  const [quickPrompt, setQuickPrompt] = useState('');
-  const [quickResponse, setQuickResponse] = useState('');
-  const [quickThinking, setQuickThinking] = useState('');
-  const [quickLoading, setQuickLoading] = useState(false);
-  const [showThinking, setShowThinking] = useState(false);
+  const heroCardRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Data states
-  const [issues, setIssues] = useState<IssueItem[]>([]);
-  const [kitchens, setKitchens] = useState<FoodKitchen[]>([]);
-  const [weavers, setWeavers] = useState<Weaver[]>([]);
-  const [loadingData, setLoadingData] = useState(true);
-
-  // Fallback demo data
-  const fallbackIssues: IssueItem[] = [
-    {
-      id: '1',
-      category: 'Structural Erosion',
-      severity: 'high',
-      jurisdiction: 'ASI Dharwad • Badami Cave 3',
-      status: 'in_progress',
-      title: 'Sandstone Delamination on Mahavishnu Relief Column',
-      description: 'Micro-fissure displaying mineral runoff during unseasonal rains. Triage dispatch scheduled with conservation team.',
-      photo_url: '/images/badami_caves.png',
-      created_at: '2026-09-24T10:30:00Z',
-    },
-    {
-      id: '2',
-      category: 'Civic Waste & Cleanliness',
-      severity: 'medium',
-      jurisdiction: 'Badami Town Municipal Council',
-      status: 'reported',
-      title: 'Disposal Bin Overflow on North Fort Access Trail',
-      description: 'Surge in weekend pilgrims has exceeded waste clearance capacity along the trail stairway.',
-      created_at: '2026-09-24T14:15:00Z',
-    },
-    {
-      id: '3',
-      category: 'Signage & Accessibility',
-      severity: 'low',
-      jurisdiction: 'Pattadakal Temple Authority',
-      status: 'resolved',
-      title: 'Damaged Kannada Inscription Plaque at Virupaksha',
-      description: 'High-contrast Braille and bilingual ASI interpretive plaque restored at the eastern mantapa entrance.',
-      created_at: '2026-09-23T09:00:00Z',
-    },
-  ];
-
-  const fallbackKitchens: FoodKitchen[] = [
-    {
-      id: '1',
-      name: 'Mallikarjuna Jolada Rotti Mane',
-      location: 'Badami Cave Temple Road',
-      distance: '0.4 km',
-      dietary_tags: ['North Karnataka Thali', 'Pure Vegetarian', 'Sattvic'],
-      verified: true,
-      specialty_dish: 'Crisp Jolada Rotti with Stuffed Yennegai Brinjal & Shenga Chutney',
-      rating: 4.9,
-    },
-    {
-      id: '2',
-      name: 'Basaveshwara Khanavali',
-      location: 'Agastya Lake Ghat, Badami',
-      distance: '0.8 km',
-      dietary_tags: ['Gluten-Free Jowar', 'Vegetarian'],
-      verified: true,
-      specialty_dish: 'Piping Hot Jowar Bhakri with Spiced Kaalu Palya & Fresh Butter',
-      rating: 4.8,
-    },
-    {
-      id: '3',
-      name: 'Banashankari Mahila Mandali',
-      location: 'Cholachagudda / Banashankari',
-      distance: '5.2 km',
-      dietary_tags: ['Community Kitchen', 'Vegetarian'],
-      verified: true,
-      specialty_dish: 'Authentic Shenga Holige (Jaggery Peanut Flatbread) & Kadabu',
-      rating: 4.9,
-    },
-  ];
-
-  const fallbackWeavers: Weaver[] = [
-    {
-      id: '1',
-      name: 'Veeresh Handloom Guild',
-      specialty: 'Guledgudda Khana Choli Fabrics (GI Tagged)',
-      gi_verified: true,
-      location: 'Guledgudda, Ward 4',
-      experience_years: 28,
-      loom_type: 'Traditional Pit Loom',
-    },
-    {
-      id: '2',
-      name: 'Kaveri Artisan Collective',
-      specialty: 'Ilkal Silk Saree with Chikki Paras Border & Tope Teni Pallu',
-      gi_verified: true,
-      location: 'Ilkal Weaving Cluster',
-      experience_years: 22,
-      loom_type: 'Fly Shuttle Loom',
-    },
-    {
-      id: '3',
-      name: 'Badami Heritage Weaving Society',
-      specialty: 'Chalukya Motifs Handwoven Kasuti Scarves & Dhotis',
-      gi_verified: true,
-      location: 'Badami Old Town',
-      experience_years: 18,
-      loom_type: 'Heritage Pit Loom',
-    },
-  ];
-
-  const fetchData = async () => {
-    setLoadingData(true);
-    try {
-      // 1. Fetch Issues
-      const { data: issuesData, error: issuesErr } = await supabase
-        .from('issues')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(6);
-
-      if (!issuesErr && issuesData && issuesData.length > 0) {
-        setIssues(issuesData);
-      } else {
-        setIssues(fallbackIssues);
-      }
-
-      // 2. Fetch Food Kitchens
-      const { data: kitchensData, error: kitchenErr } = await supabase
-        .from('food_kitchens')
-        .select('*')
-        .limit(6);
-
-      if (!kitchenErr && kitchensData && kitchensData.length > 0) {
-        setKitchens(kitchensData);
-      } else {
-        setKitchens(fallbackKitchens);
-      }
-
-      // 3. Fetch Weavers
-      const { data: weaversData, error: weaversErr } = await supabase
-        .from('weavers')
-        .select('*')
-        .limit(6);
-
-      if (!weaversErr && weaversData && weaversData.length > 0) {
-        setWeavers(weaversData);
-      } else {
-        setWeavers(fallbackWeavers);
-      }
-    } catch (err) {
-      console.warn('Using fallback seed data while Supabase connects:', err);
-      setIssues(fallbackIssues);
-      setKitchens(fallbackKitchens);
-      setWeavers(fallbackWeavers);
-    } finally {
-      setLoadingData(false);
-    }
-  };
-
+  // ── Detect desktop ──────────────────────────────────────────────
   useEffect(() => {
-    fetchData();
+    const check = () => setIsDesktop(window.innerWidth >= 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
   }, []);
 
-  // Quick Chat submit handler (Step 4 component)
-  const handleQuickChat = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!quickPrompt.trim() || quickLoading) return;
+  // ── Curtain split (Prompt 1) ─────────────────────────────────────
+  useEffect(() => {
+    const timerOpen = setTimeout(() => setCurtainOpening(true), 500);
+    const timerDone = setTimeout(() => setCurtainDone(true), 1800);
+    return () => { clearTimeout(timerOpen); clearTimeout(timerDone); };
+  }, []);
 
-    setQuickLoading(true);
-    setQuickResponse('');
-    setQuickThinking('');
-    setShowThinking(false);
+  // ── Scroll indicator (Prompt 2) ─────────────────────────────────
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 60);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-    try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: quickPrompt }),
+  // ── GSAP Parallax + all ambient animations (Prompts 1 & 2) ──────
+  useEffect(() => {
+    if (!isDesktop) return;
+    let cleanup: (() => void) | null = null;
+
+    const init = async () => {
+      const { gsap: g }: any = await import('gsap');
+      const { ScrollTrigger }: any = await import('gsap/ScrollTrigger');
+      g.registerPlugin(ScrollTrigger);
+
+      const ctx = g.context(() => {
+        window.scrollTo(0, 0);
+        const tl = g.timeline({ defaults: { ease: 'power3.out' } });
+
+        // ── PHASE 1: Curtain reveal ────────────────────────────
+        const cTop = document.getElementById('curtain-top');
+        const cBot = document.getElementById('curtain-bottom');
+        const cWord = document.getElementById('curtain-wordmark');
+        if (cTop && cBot) {
+          tl.from(cWord, { opacity: 0, y: 12, duration: 0.6 }, 0)
+            .to(cTop, { yPercent: -100, duration: 0.9, ease: 'power2.inOut' }, 1.1)
+            .to(cBot, { yPercent: 100, duration: 0.9, ease: 'power2.inOut' }, 1.1)
+            .set([cTop, cBot], { display: 'none' });
+        }
+
+        // ── PHASE 2: Layer entrance ────────────────────────────
+        const sky = document.getElementById('layer-sky');
+        const town = document.getElementById('layer-town');
+        const lake = document.getElementById('layer-lake');
+        const cliff = document.getElementById('layer-cliff');
+        const hc = document.getElementById('hero-content');
+        const t0 = cTop ? 1.5 : 0;
+
+        if (sky)   tl.from(sky,   { scale: 1.1, duration: 2.0 }, t0);
+        if (town)  tl.from(town,  { opacity: 0, y: 30, scale: 1.05, duration: 1.4 }, t0 + 0.1);
+        if (lake)  tl.from(lake,  { opacity: 0, duration: 1.6 }, t0 + 0.2);
+        if (cliff) tl.from(cliff, { x: -100, opacity: 0, duration: 1.5 }, t0 + 0.05);
+        if (hc)    tl.from(hc,    { opacity: 0, y: 24, duration: 1.0, ease: 'power2.out' }, t0 + 0.5);
+
+        // ── PHASE 3: ScrollTrigger depth ──────────────────────
+        const hero = document.getElementById('hero-parallax');
+        if (hero) {
+          const stl = g.timeline({
+            scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: 1.2 },
+          });
+          if (cliff) stl.to(cliff, { yPercent: 30 }, 0);
+          if (town)  stl.to(town,  { yPercent: 10 }, 0);
+          if (sky)   stl.to(sky,   { yPercent: 5 },  0);
+          if (hc)    stl.to(hc,    { opacity: 0, yPercent: -15 }, 0);
+        }
+
+        // ── PHASE 4: Ambient micro-animations ─────────────────
+        // Cave glow pulse (3s yoyo)
+        const caveGlow = document.getElementById('layer-cave-glow');
+        if (caveGlow) g.to(caveGlow, { opacity: 1.0, duration: 3, ease: 'power1.inOut', yoyo: true, repeat: -1 });
+
+        // Boat bob — 3 ellipses staggered 1.5s
+        document.querySelectorAll<HTMLElement>('.boat-shadow').forEach((el, i) => {
+          g.to(el, { y: -3, duration: 6, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: i * 1.5 });
+        });
+
+        // Sun flare breathe (8s)
+        const sunFlare = document.getElementById('sun-flare');
+        if (sunFlare) g.to(sunFlare, { scale: 1.05, opacity: 0.5, duration: 8, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+
+        // Nav wordmark teal glow sync (3s)
+        g.to('.vatapi-wordmark-glow', {
+          filter: 'drop-shadow(0 0 12px rgba(137,245,231,0.75))',
+          duration: 3,
+          ease: 'power1.inOut',
+          yoyo: true,
+          repeat: -1,
+        });
+
+        // Water ripple — feTurbulence seed increment every 180ms
+        const turbulence = document.getElementById('water-turbulence');
+        if (turbulence) {
+          let seed = 0;
+          const interval = setInterval(() => {
+            seed = (seed + 1) % 100;
+            turbulence.setAttribute('seed', String(seed));
+          }, 180);
+          (turbulence as any).__rippleInterval = interval;
+        }
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to communicate with DeepSeek');
-      
-      setQuickResponse(data.text || 'No response generated.');
-      if (data.thinking) {
-        setQuickThinking(data.thinking);
-        setShowThinking(true);
-      }
-    } catch (err: any) {
-      setQuickResponse(`Error: ${err.message || 'Unable to connect to Ollama deepseek-r1:1.5b'}`);
+
+      cleanup = () => {
+        ctx.revert();
+        const turb = document.getElementById('water-turbulence');
+        if (turb && (turb as any).__rippleInterval) clearInterval((turb as any).__rippleInterval);
+      };
+    };
+
+    init().catch(console.error);
+    return () => cleanup?.();
+  }, [isDesktop]);
+
+  // ── GlassCard mouse-tilt (Prompt 3) ─────────────────────────────
+  useEffect(() => {
+    if (!isDesktop) return;
+    const card = heroCardRef.current;
+    if (!card) return;
+
+    const handleMove = (e: MouseEvent) => {
+      const rect = card.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const rotX = ((e.clientY - cy) / rect.height) * -5;
+      const rotY = ((e.clientX - cx) / rect.width) * 5;
+      card.style.transform = `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+      const nx = ((e.clientX - rect.left) / rect.width) * 100;
+      const ny = ((e.clientY - rect.top) / rect.height) * 100;
+      card.style.setProperty('--shine-x', `${nx}%`);
+      card.style.setProperty('--shine-y', `${ny}%`);
+      card.classList.add('glass-shine-active');
+    };
+    const handleLeave = () => {
+      card.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg)';
+      card.classList.remove('glass-shine-active');
+    };
+    card.addEventListener('mousemove', handleMove);
+    card.addEventListener('mouseleave', handleLeave);
+    return () => { card.removeEventListener('mousemove', handleMove); card.removeEventListener('mouseleave', handleLeave); };
+  }, [isDesktop]);
+
+  // ── Auth handlers ────────────────────────────────────────────────
+  const handleGoogleSignIn = async () => {
+    try {
+      setAuthLoading(true);
+      setAuthError(null);
+      const redirectTo = `${window.location.origin}/home`;
+      const { error } = await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo } });
+      if (error) { setAuthError(error.message); setTimeout(() => setAuthError(null), 5000); }
+    } catch {
+      setAuthError('Auth service unavailable');
+      setTimeout(() => setAuthError(null), 4000);
     } finally {
-      setQuickLoading(false);
-    }
-  };
-
-  const getSeverityBadge = (severity: string) => {
-    switch (severity) {
-      case 'critical':
-        return 'bg-[#ba1a1a]/15 text-[#ba1a1a] border-[#ba1a1a]/30';
-      case 'high':
-        return 'bg-[#ff9475]/30 text-[#762b14] border-[#ff9475]';
-      case 'medium':
-        return 'bg-[#ffdbd1] text-[#9a452c] border-[#ffb5a0]';
-      default:
-        return 'bg-[#eae8e5] text-[#3d4947] border-[#bcc9c6]';
-    }
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'resolved':
-      case 'closed':
-        return 'bg-[#e6f4ea] text-[#137333]';
-      case 'in_progress':
-        return 'bg-[#00685f]/15 text-[#00685f]';
-      default:
-        return 'bg-[#f5f3f0] text-[#6d7a77]';
+      setAuthLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#fbf9f6] flex flex-col font-sans selection:bg-[#89f5e7] selection:text-[#00201d]">
-      {/* Navbar */}
-      <Navbar
-        onOpenReportModal={() => setIsReportModalOpen(true)}
-        onOpenChatModal={() => {
-          setChatPromptPreload('');
-          setIsChatModalOpen(true);
+    <main
+      id="hero-parallax"
+      className="relative w-screen h-screen overflow-hidden bg-[#130d09] text-white"
+      style={{ maxHeight: '100dvh' }}
+    >
+      {/* ══════════════════════════════════════════════════
+          SVG WATER RIPPLE FILTER
+          ══════════════════════════════════════════════════ */}
+      <svg className="absolute w-0 h-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        <defs>
+          <filter id="water-ripple-filter">
+            <feTurbulence id="water-turbulence" type="turbulence" baseFrequency="0.01 0.012" numOctaves="2" seed="0" result="turbulence" />
+            <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="4" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </defs>
+      </svg>
+
+      {/* ══════════════════════════════════════════════════
+          CINEMATIC CURTAIN (Prompt 1)
+          ══════════════════════════════════════════════════ */}
+      {!curtainDone && (
+        <div className="fixed inset-0 z-[200] pointer-events-none overflow-hidden">
+          {/* Top Curtain */}
+          <div
+            id="curtain-top"
+            className="absolute top-0 inset-x-0 flex flex-col items-center justify-end pb-8 border-b border-[#9a452c]/40"
+            style={{
+              height: '50vh',
+              background: 'linear-gradient(to bottom, #140b06 60%, #2d1a0e)',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.8)',
+              transform: curtainOpening ? 'translateY(-100%)' : 'translateY(0%)',
+              transition: 'transform 900ms cubic-bezier(0.16, 1, 0.3, 1)',
+              willChange: 'transform',
+            }}
+          >
+            <div id="curtain-wordmark" className="flex flex-col items-center gap-2">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#9a452c] to-[#00685f] flex items-center justify-center text-white font-serif font-black text-2xl shadow-xl border border-white/20">
+                V
+              </div>
+              <h1 className="font-serif text-3xl font-extrabold tracking-[0.2em] text-[#ffdbd1]">VATAPI</h1>
+              <p className="text-[10px] uppercase tracking-[0.35em] text-[#89f5e7]/80 font-medium">Heritage · Civic · AI · Grid</p>
+            </div>
+          </div>
+
+          {/* Bottom Curtain */}
+          <div
+            id="curtain-bottom"
+            className="absolute bottom-0 inset-x-0 flex items-start justify-center pt-5 border-t border-[#9a452c]/40"
+            style={{
+              height: '50vh',
+              background: 'linear-gradient(to top, #140b06 60%, #2d1a0e)',
+              boxShadow: '0 -10px 40px rgba(0,0,0,0.8)',
+              transform: curtainOpening ? 'translateY(100%)' : 'translateY(0%)',
+              transition: 'transform 900ms cubic-bezier(0.16, 1, 0.3, 1)',
+              willChange: 'transform',
+            }}
+          >
+            <span className="font-mono text-[10px] uppercase tracking-widest text-amber-200/40">
+              Initiating Chalukyan Reveal Sequence...
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════
+          BACKGROUND LAYER: VIDEO (Boats on Agastya Lake)
+          + Fallback image = attached Badami aerial photo
+          ══════════════════════════════════════════════════ */}
+      <div className="absolute inset-0 z-0 w-full h-full overflow-hidden">
+        {/* Video — looped, muted, covers full viewport */}
+        <video
+          ref={videoRef}
+          className="absolute inset-0 w-full h-full object-cover"
+          src="/video/boats_agastya_lake.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          aria-hidden="true"
+          style={{ filter: 'brightness(0.80) contrast(1.10) saturate(1.15)' }}
+        />
+        {/* Static hero image (poster / SSR fallback) sits under video */}
+        <Image
+          src="/images/badami_sunset_aerial.png"
+          alt="Badami Agastya Lake Aerial"
+          fill
+          priority
+          sizes="100vw"
+          quality={95}
+          className="object-cover object-center"
+          style={{ filter: 'brightness(0.72) contrast(1.12) saturate(1.1)', zIndex: -1 }}
+        />
+      </div>
+
+      {/* ══════════════════════════════════════════════════
+          4-LAYER DEPTH STACK (clip-path simulated zones)
+          ══════════════════════════════════════════════════ */}
+
+      {/* SKY LAYER — top 40% */}
+      <div id="layer-sky" className="absolute inset-0 z-[1] pointer-events-none" style={{ willChange: 'transform' }}>
+        <Image src="/images/badami_sunset_aerial.png" alt="" fill aria-hidden="true" sizes="100vw"
+          className="object-cover object-top opacity-15"
+          style={{ clipPath: 'polygon(0 0, 100% 0, 100% 42%, 0 42%)' }} />
+      </div>
+
+      {/* TOWN LAYER — right 30% */}
+      <div id="layer-town" className="absolute inset-0 z-[2] pointer-events-none" style={{ willChange: 'transform' }}>
+        <Image src="/images/badami_sunset_aerial.png" alt="" fill aria-hidden="true" sizes="100vw"
+          className="object-cover object-right opacity-20"
+          style={{ clipPath: 'polygon(65% 30%, 100% 30%, 100% 80%, 65% 80%)' }} />
+      </div>
+
+      {/* LAKE LAYER — center band, water ripple filter */}
+      <div id="layer-lake" className="absolute inset-0 z-[3] pointer-events-none" style={{ willChange: 'transform' }}>
+        <Image src="/images/badami_sunset_aerial.png" alt="" fill aria-hidden="true" sizes="100vw"
+          className="object-cover object-center opacity-25"
+          style={{
+            clipPath: 'polygon(20% 45%, 80% 45%, 80% 72%, 20% 72%)',
+            filter: 'url(#water-ripple-filter)',
+          }} />
+      </div>
+
+      {/* CLIFF LAYER — left 40% */}
+      <div id="layer-cliff" className="absolute inset-0 z-[4] pointer-events-none" style={{ willChange: 'transform' }}>
+        <Image src="/images/badami_sunset_aerial.png" alt="" fill aria-hidden="true"
+          className="object-cover object-left opacity-30"
+          style={{ clipPath: 'polygon(0 20%, 42% 20%, 42% 88%, 0 88%)' }} />
+      </div>
+
+      {/* ══════════════════════════════════════════════════
+          AMBIENT OVERLAYS
+          ══════════════════════════════════════════════════ */}
+      {/* Global darkening gradients */}
+      <div className="absolute inset-0 z-[5] pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#120a06]/75 via-transparent to-[#0a0705]/90" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_28%,rgba(8,4,2,0.72)_100%)]" />
+      </div>
+
+      {/* CAVE GLOW — warm amber pulse over left cliff temple zone */}
+      <div
+        id="layer-cave-glow"
+        className="absolute z-[6] pointer-events-none"
+        style={{
+          top: '36%', left: '6%',
+          width: '340px', height: '300px',
+          background: 'radial-gradient(ellipse at center, rgba(210,100,20,0.38) 0%, rgba(154,69,44,0.20) 45%, transparent 80%)',
+          opacity: 0.4,
+          borderRadius: '50%',
         }}
+        aria-hidden="true"
       />
 
-      <main className="flex-1 pt-20">
-        {/* ========================================================================= */}
-        {/* 1. HERO SECTION (Under shell header bleed) */}
-        {/* ========================================================================= */}
-        <section id="home" className="relative w-full overflow-hidden bg-[#1b1c1a] text-white">
-          {/* Hero Background Image */}
-          <div
-            className="absolute inset-0 w-full h-full bg-cover bg-center transition-transform duration-1000 scale-105 opacity-40 mix-blend-luminosity"
-            style={{ backgroundImage: "url('/images/badami_caves.png')" }}
-          ></div>
+      {/* SUN FLARE — top right breathe */}
+      <div
+        id="sun-flare"
+        className="absolute z-[6] pointer-events-none"
+        style={{
+          top: '6%', right: '18%',
+          width: '280px', height: '280px',
+          background: 'radial-gradient(circle, rgba(255,200,80,0.18) 0%, rgba(255,140,40,0.10) 50%, transparent 80%)',
+          opacity: 0.35,
+          borderRadius: '50%',
+          willChange: 'transform, opacity',
+        }}
+        aria-hidden="true"
+      />
 
-          {/* Gradients */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#1a100c]/90 via-[#24140e]/60 to-[#1b1c1a]/95 pointer-events-none"></div>
+      {/* BOAT SHADOWS — 3 tiny ellipses over lake (Agastya Lake zone) */}
+      {[
+        { left: '38%', top: '58%' },
+        { left: '48%', top: '61%' },
+        { left: '57%', top: '59%' },
+      ].map((pos, i) => (
+        <div
+          key={i}
+          className="boat-shadow absolute z-[7] pointer-events-none"
+          style={{
+            left: pos.left, top: pos.top,
+            width: '22px', height: '8px',
+            background: 'rgba(10,6,3,0.45)',
+            borderRadius: '50%',
+            filter: 'blur(1px)',
+            willChange: 'transform',
+          }}
+          aria-hidden="true"
+        />
+      ))}
 
-          {/* Content */}
-          <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 pt-16 pb-20 flex flex-col justify-between min-h-[85vh]">
-            {/* Top Badges & Meta */}
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-white border border-white/10 shadow-xs">
-                <span className="w-2 h-2 rounded-full bg-[#89f5e7] animate-pulse"></span>
-                <span className="text-xs uppercase tracking-wider font-semibold text-[#f5f3f0]">
-                  AI-Powered Civic Infrastructure & Heritage Tourism • Bagalkote
-                </span>
-              </div>
-              <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#9a452c]/40 backdrop-blur-md text-[#ffdbd1] text-xs font-semibold">
-                <span className="material-symbols-outlined text-[15px]">verified</span>
-                <span>ASI Dharwad • Taluk Civic Grid</span>
-              </div>
+      {/* ══════════════════════════════════════════════════
+          FLOATING LOTUS PARTICLES (Prompt 2)
+          ══════════════════════════════════════════════════ */}
+      <div className="absolute inset-0 z-[8] pointer-events-none">
+        <FloatingParticles />
+      </div>
+
+      {/* ══════════════════════════════════════════════════
+          MAIN HERO CONTENT
+          ══════════════════════════════════════════════════ */}
+      <div id="hero-content" className="absolute inset-0 z-[10] flex flex-col justify-between pointer-events-none">
+
+        {/* ── TOP NAV BAR ──────────────────────────────────── */}
+        <nav className="pointer-events-auto w-full px-5 lg:px-10 pt-4 flex items-center justify-between">
+          {/* Brand Wordmark */}
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#9a452c] to-[#00685f] flex items-center justify-center text-white font-serif font-bold text-lg shadow-md border border-white/25">
+              V
             </div>
-
-            {/* Main Headline */}
-            <div className="max-w-4xl py-12 flex flex-col gap-6">
-              <div className="flex items-center gap-2">
-                <div className="w-12 h-0.5 bg-[#ff9475]"></div>
-                <span className="text-xs uppercase tracking-[0.25em] text-[#ffdbd1] font-bold">
-                  The Cradle of Chalukyan Architecture
-                </span>
-              </div>
-
-              <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight drop-shadow-md">
-                Redesigning Heritage Tourism with AI
-              </h1>
-
-              <p className="text-base sm:text-lg text-[#efeeeb] max-w-2xl leading-relaxed">
-                One platform, one ledger. Preserving Badami, Aihole, and Pattadakal through real-time AI triage,
-                supporting authentic Ooru Oota food kitchens, and empowering Guledgudda handloom weavers.
-              </p>
-
-              {/* CTAs */}
-              <div className="flex flex-wrap items-center gap-4 pt-2">
-                <a
-                  href="#heritage-watch"
-                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-[#00685f] hover:bg-[#008378] text-white font-medium text-sm transition-all shadow-lg hover:shadow-xl group"
-                >
-                  <span className="material-symbols-outlined text-[20px] transition-transform group-hover:rotate-45">
-                    bolt
-                  </span>
-                  <span>Explore Heritage Watch</span>
-                </a>
-
-                <button
-                  type="button"
-                  onClick={() => setIsChatModalOpen(true)}
-                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur-md text-white font-medium text-sm transition-all shadow-sm border border-white/20"
-                >
-                  <span className="material-symbols-outlined text-[20px] text-[#89f5e7]">neurology</span>
-                  <span>Consult DeepSeek-R1 (Local AI)</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setIsReportModalOpen(true)}
-                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-[#9a452c] hover:bg-[#762b14] text-white font-medium text-sm transition-all shadow-sm"
-                >
-                  <span className="material-symbols-outlined text-[20px]">add_circle</span>
-                  <span>Report Civic Issue</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Hero Metrics Ribbon */}
-            <div className="w-full bg-white/10 backdrop-blur-xl rounded-2xl p-5 border border-white/10 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#f5f3f0]">
-              <div className="flex flex-wrap items-center gap-6">
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[#89f5e7] text-[18px]">account_balance</span>
-                  <span className="font-semibold text-white">4 UNESCO Contender Sites</span>
-                </div>
-                <div className="hidden sm:block w-1.5 h-1.5 rounded-full bg-[#ff9475]"></div>
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[#89f5e7] text-[18px]">database</span>
-                  <span>Supabase PostgreSQL + Storage</span>
-                </div>
-                <div className="hidden sm:block w-1.5 h-1.5 rounded-full bg-[#ff9475]"></div>
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[#89f5e7] text-[18px]">memory</span>
-                  <span>DeepSeek R1 Running on Ollama</span>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 text-[11px] text-[#ffb5a0] bg-[#9a452c]/50 px-3 py-1.5 rounded-xl">
-                <span className="material-symbols-outlined text-[15px]">verified_user</span>
-                <span>Bagalkote District Civic Grid Ready</span>
-              </div>
-            </div>
+            <span
+              className="vatapi-wordmark-glow font-serif text-2xl font-extrabold tracking-tight text-white"
+              style={{ filter: 'drop-shadow(0 0 5px rgba(137,245,231,0.35))', transition: 'filter 0.3s ease' }}
+            >
+              Vatapi
+            </span>
+            <span className="hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-white/10 text-[#89f5e7] border border-white/15 backdrop-blur-sm">
+              Chalukyan Grid
+            </span>
           </div>
-        </section>
 
+          {/* Live indicator */}
+          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/45 backdrop-blur-md border border-white/15 text-xs text-[#d1ece6]">
+            <span className="w-2 h-2 rounded-full bg-[#00e5c9] animate-ping shrink-0" />
+            <span className="font-mono text-[10px] tracking-wider">LIVE · BADAMI · PATTADAKAL · AIHOLE</span>
+          </div>
 
-        {/* ========================================================================= */}
-        {/* 2. STEP 4 DEEPSEEK OLLAMA INTERACTIVE TESTING PANEL */}
-        {/* ========================================================================= */}
-        <section className="max-w-7xl mx-auto px-6 lg:px-12 -mt-8 relative z-20">
-          <div className="bg-white rounded-2xl shadow-xl border border-[#eae8e5] p-6 lg:p-8">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[#eae8e5]">
-              <div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#00685f]/10 text-[#00685f] text-xs font-semibold mb-2">
-                  <span className="material-symbols-outlined text-[15px]">neurology</span>
-                  Next.js App Router + Ollama Route Handler
-                </div>
-                <h2 className="font-serif text-2xl font-bold text-[#1b1c1a]">
-                  Next.js + DeepSeek (via Local Ollama)
-                </h2>
-                <p className="text-xs text-[#6d7a77] mt-1">
-                  Communicating with <code className="bg-[#efeeeb] px-1.5 py-0.5 rounded text-[#00685f] font-mono text-[11px]">http://127.0.0.1:11434</code> via <code className="bg-[#efeeeb] px-1.5 py-0.5 rounded text-[#9a452c] font-mono text-[11px]">/api/chat</code>
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#e6f4ea] text-[#137333] text-xs font-medium">
-                  <span className="w-2 h-2 rounded-full bg-[#137333] animate-ping"></span>
-                  Ollama Connected: deepseek-r1:1.5b
+          {/* AUTH CORNER — Prompt 3 glassmorphic widget (top-right) */}
+          <div
+            className="glass-card pointer-events-auto flex items-center gap-2 px-3 py-2 rounded-xl"
+            style={{
+              background: 'rgba(20,12,6,0.70)',
+              backdropFilter: 'blur(20px) saturate(160%)',
+              WebkitBackdropFilter: 'blur(20px) saturate(160%)',
+              border: '1px solid rgba(255,255,255,0.18)',
+              boxShadow: '0 8px 30px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.12)',
+              borderRadius: '14px',
+            }}
+          >
+            {user ? (
+              <Link href="/home" className="flex items-center gap-1.5 text-xs font-semibold text-[#89f5e7] hover:text-white transition-colors">
+                <span className="w-6 h-6 rounded-full bg-gradient-to-tr from-[#9a452c] to-[#00685f] flex items-center justify-center text-[10px] font-bold text-white">
+                  {user.email?.[0]?.toUpperCase()}
                 </span>
+                <span className="hidden sm:inline">Continue →</span>
+              </Link>
+            ) : (
+              <>
+                {/* Google Sign-In button */}
                 <button
-                  type="button"
-                  onClick={() => setIsChatModalOpen(true)}
-                  className="px-3.5 py-1.5 rounded-xl border border-[#00685f] text-[#00685f] hover:bg-[#00685f]/5 text-xs font-semibold transition-colors"
+                  onClick={handleGoogleSignIn}
+                  disabled={authLoading}
+                  title="Sign in with Gmail"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-stone-900 bg-white hover:bg-stone-100 transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-sm"
                 >
-                  Full Modal View
+                  {/* Google G icon */}
+                  <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.03h3.88c2.27-2.09 3.665-5.17 3.665-9.12z"/>
+                    <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.03c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.13C3.26 21.36 7.33 24 12 24z"/>
+                    <path fill="#FBBC05" d="M5.28 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.13z"/>
+                    <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.13c.95-2.83 3.6-4.96 6.72-4.96z"/>
+                  </svg>
+                  <span className="hidden sm:inline">{authLoading ? '…' : 'Gmail'}</span>
                 </button>
-              </div>
-            </div>
 
-            {/* Quick interactive form */}
-            <form onSubmit={handleQuickChat} className="mt-6 flex flex-col sm:flex-row gap-3">
-              <input
-                type="text"
-                value={quickPrompt}
-                onChange={(e) => setQuickPrompt(e.target.value)}
-                placeholder="Ask DeepSeek anything about Badami heritage, structural wear, or local weavers..."
-                disabled={quickLoading}
-                className="flex-1 px-4 py-3 rounded-xl border border-[#bcc9c6] text-sm text-[#1b1c1a] bg-[#fbf9f6] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00685f] transition-all disabled:opacity-50"
-              />
-              <button
-                type="submit"
-                disabled={quickLoading || !quickPrompt.trim()}
-                className="px-6 py-3 rounded-xl bg-[#00685f] hover:bg-[#008378] text-white font-medium text-sm flex items-center justify-center gap-2 shadow-md transition-all disabled:opacity-50 shrink-0"
-              >
-                {quickLoading ? (
-                  <>
-                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                    <span>Thinking...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Send to DeepSeek</span>
-                    <span className="material-symbols-outlined text-[18px]">send</span>
-                  </>
-                )}
-              </button>
-            </form>
+                <div className="w-px h-5 bg-white/20" />
 
-            {/* Response Area */}
-            {(quickResponse || quickLoading) && (
-              <div className="mt-6 space-y-3">
-                {/* Thinking Process Accordion */}
-                {quickThinking && (
-                  <div className="rounded-xl border border-[#bcc9c6]/50 bg-[#efeeeb]/60 text-xs overflow-hidden">
-                    <button
-                      type="button"
-                      onClick={() => setShowThinking(!showThinking)}
-                      className="w-full px-4 py-2.5 flex items-center justify-between font-mono text-[11px] text-[#3d4947] hover:bg-[#eae8e5] transition-colors"
-                    >
-                      <span className="flex items-center gap-2 font-medium">
-                        <span className="material-symbols-outlined text-[15px] text-[#00685f]">psychology</span>
-                        DeepSeek-R1 Chain of Thought ({quickThinking.length} chars)
-                      </span>
-                      <span className="material-symbols-outlined text-[16px]">
-                        {showThinking ? 'expand_less' : 'expand_more'}
-                      </span>
-                    </button>
-                    {showThinking && (
-                      <div className="p-4 font-mono text-[11px] text-[#3d4947] border-t border-[#bcc9c6]/30 bg-white/70 whitespace-pre-wrap leading-relaxed">
-                        {quickThinking}
-                      </div>
-                    )}
-                  </div>
-                )}
+                {/* Explore as Guest */}
+                <Link
+                  href="/home"
+                  className="px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-gradient-to-r from-[#9a452c] to-[#00685f] hover:from-[#aa4c31] hover:to-[#007f74] transition-all hover:scale-105 active:scale-95 shadow-md shadow-[#9a452c]/30 flex items-center gap-1 group"
+                >
+                  <span>Guest</span>
+                  <span className="text-[#89f5e7] group-hover:translate-x-0.5 transition-transform">→</span>
+                </Link>
+              </>
+            )}
 
-                {/* Final Answer */}
-                <div className="p-5 bg-[#f5f3f0] rounded-xl border border-[#eae8e5] text-sm text-[#1b1c1a] leading-relaxed whitespace-pre-wrap">
-                  {quickResponse}
-                </div>
-              </div>
+            {authError && (
+              <span className="text-[10px] text-amber-300 font-mono px-2 truncate max-w-[120px]" title={authError}>
+                ⚠ {authError.slice(0, 20)}…
+              </span>
             )}
           </div>
-        </section>
+        </nav>
 
-
-        {/* ========================================================================= */}
-        {/* 3. HERITAGE WATCH (Civic & Preservation Issues) */}
-        {/* ========================================================================= */}
-        <section id="heritage-watch" className="max-w-7xl mx-auto px-6 lg:px-12 py-20">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
-            <div>
-              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#9a452c] mb-2">
-                <span className="w-8 h-0.5 bg-[#9a452c]"></span>
-                Supabase &apos;issues&apos; Table
-              </div>
-              <h2 className="font-serif text-3xl font-bold text-[#1b1c1a]">
-                Heritage Watch & Civic Triage
-              </h2>
-              <p className="text-sm text-[#6d7a77] mt-1 max-w-xl">
-                Civic issues, structural weathering, and site preservation reports logged by citizens and monitored by ASI Dharwad.
-              </p>
+        {/* ── CENTER HERO TITLE OVERLAY ─────────────────────── */}
+        <div className="flex-1 flex items-center justify-center px-4 pointer-events-none">
+          {/* Glassmorphic hero info card — mouse tilt applied via ref */}
+          <div
+            ref={heroCardRef}
+            className="glass-card text-center max-w-xl w-full px-5 py-6 sm:px-8 sm:py-8"
+            style={{
+              background: 'rgba(18, 10, 5, 0.65)',
+              backdropFilter: 'blur(28px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+              border: '1px solid rgba(255,255,255,0.16)',
+              borderRadius: '24px',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.15)',
+              transition: 'transform 0.12s ease-out',
+              willChange: 'transform',
+            }}
+          >
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-400/30 text-amber-200 text-[10px] font-semibold tracking-wider mb-3">
+              <span className="text-amber-400">✦</span> Chalukyan Capital · 543 – 757 CE <span className="text-amber-400">✦</span>
             </div>
 
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={fetchData}
-                className="p-2.5 rounded-xl border border-[#eae8e5] bg-white hover:bg-[#f5f3f0] text-[#6d7a77] text-xs font-medium transition-colors flex items-center gap-1.5"
-                title="Refresh from Supabase"
-              >
-                <span className="material-symbols-outlined text-[18px]">refresh</span>
-                <span className="hidden sm:inline">Sync DB</span>
-              </button>
+            <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl font-black text-white drop-shadow-lg leading-tight">
+              Badami <span className="text-[#ffb29e]">Heritage</span><br />
+              <span className="text-sm sm:text-base font-semibold tracking-wide text-[#d1ece6]/80 font-sans">
+                AI-Powered Civic Heritage Grid
+              </span>
+            </h1>
 
-              <button
-                type="button"
-                onClick={() => setIsReportModalOpen(true)}
-                className="px-4 py-2.5 rounded-xl bg-[#00685f] hover:bg-[#008378] text-white text-xs font-semibold shadow-sm transition-all flex items-center gap-1.5"
-              >
-                <span className="material-symbols-outlined text-[18px]">add</span>
-                <span>Report New Issue</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Grid of Issues */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {issues.map((issue) => (
-              <div
-                key={issue.id}
-                className="bg-white rounded-2xl border border-[#eae8e5] p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
-              >
-                <div>
-                  {/* Badges */}
-                  <div className="flex items-center justify-between gap-2 mb-3">
-                    <span
-                      className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${getSeverityBadge(
-                        issue.severity
-                      )}`}
-                    >
-                      {issue.severity} Severity
-                    </span>
-                    <span
-                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider ${getStatusBadge(
-                        issue.status
-                      )}`}
-                    >
-                      {issue.status.replace('_', ' ')}
-                    </span>
-                  </div>
-
-                  {/* Title & Category */}
-                  <div className="text-[11px] font-semibold text-[#00685f] uppercase tracking-wide mb-1">
-                    {issue.category}
-                  </div>
-                  <h3 className="font-serif text-lg font-bold text-[#1b1c1a] leading-snug mb-2">
-                    {issue.title || `${issue.category} Incident`}
-                  </h3>
-                  <p className="text-xs text-[#6d7a77] leading-relaxed line-clamp-3 mb-4">
-                    {issue.description || 'No additional narrative provided.'}
-                  </p>
-
-                  {/* Photo if present */}
-                  {issue.photo_url && (
-                    <div className="w-full h-36 rounded-xl overflow-hidden bg-[#efeeeb] mb-4">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={issue.photo_url}
-                        alt="Evidence"
-                        className="w-full h-full object-cover hover:scale-105 transition-transform"
-                      />
-                    </div>
-                  )}
-                </div>
-
-                {/* Footer Meta */}
-                <div className="pt-4 border-t border-[#eae8e5] text-[11px] text-[#6d7a77] flex items-center justify-between">
-                  <div className="flex items-center gap-1 truncate max-w-[200px]">
-                    <span className="material-symbols-outlined text-[15px] text-[#9a452c]">account_balance</span>
-                    <span className="truncate">{issue.jurisdiction}</span>
-                  </div>
-                  <span>
-                    {new Date(issue.created_at).toLocaleDateString([], {
-                      month: 'short',
-                      day: 'numeric',
-                    })}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-
-        {/* ========================================================================= */}
-        {/* 4. OORU OOTA (Authentic North Karnataka Food Kitchens) */}
-        {/* ========================================================================= */}
-        <section id="ooru-oota" className="bg-[#efeeeb]/50 py-20 border-y border-[#eae8e5]">
-          <div className="max-w-7xl mx-auto px-6 lg:px-12">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
-              <div>
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#00685f] mb-2">
-                  <span className="w-8 h-0.5 bg-[#00685f]"></span>
-                  Supabase &apos;food_kitchens&apos; Table
-                </div>
-                <h2 className="font-serif text-3xl font-bold text-[#1b1c1a]">
-                  Ooru Oota • Authentic Village Meals
-                </h2>
-                <p className="text-sm text-[#6d7a77] mt-1 max-w-xl">
-                  North Karnataka gastronomic heritage: Jolada Rotti, Yennegai stuffed brinjals, Kaalu Palya, and wood-fired khanavalis.
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setChatPromptPreload('Where can I find the best authentic Jolada Rotti in Badami near the cave temples?');
-                  setIsChatModalOpen(true);
-                }}
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-[#bcc9c6] bg-white text-xs font-semibold text-[#1b1c1a] hover:bg-[#eae8e5] transition-colors"
-              >
-                <span className="material-symbols-outlined text-[17px] text-[#9a452c]">restaurant</span>
-                <span>Ask DeepSeek for Food Recommendations</span>
-              </button>
-            </div>
-
-            {/* Kitchens Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {kitchens.map((kitchen) => (
-                <div
-                  key={kitchen.id}
-                  className="bg-white rounded-2xl border border-[#eae8e5] p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-1 text-[#00685f] text-xs font-semibold">
-                        <span className="material-symbols-outlined text-[16px]">verified</span>
-                        <span>Verified Kitchen</span>
-                      </div>
-                      {kitchen.rating && (
-                        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#fff9c4] text-[#8d6e63] font-bold text-xs">
-                          <span className="material-symbols-outlined text-[13px] text-[#f57f17]">star</span>
-                          <span>{kitchen.rating}</span>
-                        </div>
-                      )}
-                    </div>
-
-                    <h3 className="font-serif text-xl font-bold text-[#1b1c1a] mb-1">
-                      {kitchen.name}
-                    </h3>
-                    <p className="text-xs text-[#9a452c] font-medium flex items-center gap-1 mb-3">
-                      <span className="material-symbols-outlined text-[15px]">location_on</span>
-                      <span>{kitchen.location} • {kitchen.distance}</span>
-                    </p>
-
-                    <p className="text-xs text-[#3d4947] leading-relaxed mb-4">
-                      {kitchen.specialty_dish || 'Authentic North Karnataka traditional thali.'}
-                    </p>
-
-                    {/* Dietary Tags */}
-                    <div className="flex flex-wrap gap-1.5 mb-4">
-                      {kitchen.dietary_tags?.map((tag, idx) => (
-                        <span
-                          key={idx}
-                          className="px-2 py-0.5 rounded-md bg-[#f5f3f0] text-[#6d7a77] text-[10px] font-medium"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setChatPromptPreload(`Tell me about the specialty dishes at ${kitchen.name} in Badami.`);
-                      setIsChatModalOpen(true);
-                    }}
-                    className="w-full py-2.5 rounded-xl border border-[#00685f]/30 hover:bg-[#00685f]/10 text-[#00685f] text-xs font-semibold transition-colors flex items-center justify-center gap-1"
-                  >
-                    <span>View Heritage Menu</span>
-                    <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-                  </button>
+            {/* Animated stat counters (Prompt 2) */}
+            <div className="mt-4 grid grid-cols-4 gap-1 sm:gap-2">
+              {[
+                { val: '4', label: 'UNESCO', sub: 'Sites' },
+                { val: '1400+', label: 'Years', sub: 'Legacy' },
+                { val: '312', label: 'GI', sub: 'Weavers' },
+                { val: '98%', label: 'Triaged', sub: 'AI Speed' },
+              ].map(({ val, label, sub }) => (
+                <div key={label} className="flex flex-col items-center p-1.5 rounded-lg bg-white/5 border border-white/10">
+                  <span className="text-sm sm:text-base font-bold font-mono text-[#89f5e7]">{val}</span>
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-white/70">{label}</span>
+                  <span className="text-[8px] text-white/45">{sub}</span>
                 </div>
               ))}
             </div>
-          </div>
-        </section>
 
-
-        {/* ========================================================================= */}
-        {/* 5. WEAVERS (Guledgudda Khana & Ilkal Handlooms) */}
-        {/* ========================================================================= */}
-        <section id="weavers" className="max-w-7xl mx-auto px-6 lg:px-12 py-20">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
-            <div>
-              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#9a452c] mb-2">
-                <span className="w-8 h-0.5 bg-[#9a452c]"></span>
-                Supabase &apos;weavers&apos; Table
-              </div>
-              <h2 className="font-serif text-3xl font-bold text-[#1b1c1a]">
-                Artisan-to-Traveller Weavers
-              </h2>
-              <p className="text-sm text-[#6d7a77] mt-1 max-w-xl">
-                Geographical Indication (GI) certified handloom weavers producing centuries-old Guledgudda Khana and Ilkal silk textiles.
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => {
-                setChatPromptPreload('What makes Guledgudda Khana unique and how is its GI tag verified?');
-                setIsChatModalOpen(true);
-              }}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-[#bcc9c6] bg-white text-xs font-semibold text-[#1b1c1a] hover:bg-[#efeeeb] transition-colors"
-            >
-              <span className="material-symbols-outlined text-[17px] text-[#00685f]">texture</span>
-              <span>Ask DeepSeek about GI Handlooms</span>
-            </button>
-          </div>
-
-          {/* Grid of Weavers */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {weavers.map((weaver) => (
-              <div
-                key={weaver.id}
-                className="bg-white rounded-2xl border border-[#eae8e5] p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+            {/* Explore CTA — teal glow button (Prompt 2) */}
+            <div className="mt-4 pointer-events-auto">
+              <Link
+                href="/heritage-watch"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white transition-all duration-200 hover:scale-105 active:scale-95 group"
+                style={{
+                  background: 'linear-gradient(135deg, #9a452c 0%, #006860 100%)',
+                  boxShadow: '0 0 20px rgba(13,148,136,0.35)',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 0 40px rgba(13,148,136,0.65), 0 8px 20px rgba(0,0,0,0.4)')}
+                onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 0 20px rgba(13,148,136,0.35)')}
               >
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#ffdbd1] text-[#762b14] text-[10px] font-bold uppercase tracking-wider">
-                      <span className="material-symbols-outlined text-[13px]">verified</span>
-                      GI Verified Artisan
-                    </span>
-                    <span className="text-[11px] text-[#6d7a77] font-medium">
-                      {weaver.experience_years ? `${weaver.experience_years} Yrs Exp` : 'Master Weaver'}
-                    </span>
-                  </div>
-
-                  <h3 className="font-serif text-xl font-bold text-[#1b1c1a] mb-1">
-                    {weaver.name}
-                  </h3>
-                  <p className="text-xs text-[#6d7a77] flex items-center gap-1 mb-3">
-                    <span className="material-symbols-outlined text-[15px] text-[#9a452c]">pin_drop</span>
-                    <span>{weaver.location || 'Bagalkote District'}</span>
-                  </p>
-
-                  <div className="p-3 bg-[#fbf9f6] rounded-xl border border-[#eae8e5] text-xs text-[#3d4947] mb-4 space-y-1">
-                    <div>
-                      <span className="font-semibold text-[#1b1c1a]">Specialty:</span> {weaver.specialty}
-                    </div>
-                    {weaver.loom_type && (
-                      <div className="text-[11px] text-[#6d7a77]">
-                        <span className="font-medium text-[#3d4947]">Loom:</span> {weaver.loom_type}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setChatPromptPreload(`How can I visit ${weaver.name} in ${weaver.location || 'Bagalkote'} and purchase authentic GI Khana fabrics?`);
-                    setIsChatModalOpen(true);
-                  }}
-                  className="w-full py-2.5 rounded-xl bg-[#9a452c]/10 hover:bg-[#9a452c]/20 text-[#9a452c] text-xs font-semibold transition-colors flex items-center justify-center gap-1"
-                >
-                  <span className="material-symbols-outlined text-[16px]">storefront</span>
-                  <span>Connect with Artisan</span>
-                </button>
-              </div>
-            ))}
-          </div>
-        </section>
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-[#1b1c1a] text-[#efeeeb] border-t border-[#30312f] py-12">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col md:flex-row items-center justify-between gap-6 text-xs">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[#00685f] flex items-center justify-center text-white font-bold font-serif text-base">
-              V
+                <span>Explore Heritage Watch</span>
+                <span className="text-[#89f5e7] group-hover:translate-x-1 transition-transform">→</span>
+              </Link>
             </div>
-            <div>
-              <span className="font-serif text-base font-bold text-white tracking-tight">Vatapi Platform</span>
-              <p className="text-[11px] text-[#bcc9c6]">Civic Triage & Chalukya Heritage Tourism Grid</p>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-4 text-[#bcc9c6]">
-            <a href="#heritage-watch" className="hover:text-white transition-colors">Heritage Watch</a>
-            <span>•</span>
-            <a href="#ooru-oota" className="hover:text-white transition-colors">Ooru Oota</a>
-            <span>•</span>
-            <a href="#weavers" className="hover:text-white transition-colors">Artisan Guild</a>
-            <span>•</span>
-            <Link href="/login" className="hover:text-white transition-colors">Supabase Auth</Link>
-          </div>
-
-          <div className="text-[11px] text-[#6d7a77]">
-            Built with Next.js App Router • Supabase Auth & DB • Local DeepSeek-R1 via Ollama
           </div>
         </div>
-      </footer>
 
-      {/* Modals */}
-      <ReportIssueModal
-        isOpen={isReportModalOpen}
-        onClose={() => setIsReportModalOpen(false)}
-        onIssueReported={fetchData}
-      />
+        {/* ── BOTTOM: DISCOVER STRIP (Prompt 2) + SCROLL INDICATOR ── */}
+        <div className="pointer-events-auto w-full px-4 lg:px-8 pb-4 pt-2 space-y-2">
+          {/* Drag-scrollable gallery dock */}
+          <div className="overflow-x-auto scrollbar-hide">
+            <div className="flex gap-3 w-max pb-1">
+              {[
+                { src: '/images/jolada_rotti_feast.png', label: 'Banana Leaf Feast', tag: 'Culinary', color: 'bg-emerald-700/80', glow: 'hover:border-[#89f5e7]', href: '/home#food' },
+                { src: '/images/badami_carvings_col.png', label: 'Rock-Cut Caves', tag: 'Heritage', color: 'bg-[#9a452c]/90', glow: 'hover:border-[#ffb29e]', href: '/home#heritage' },
+                { src: '/images/weaver_loom.png', label: 'Handloom Craft', tag: 'GI Weavers', color: 'bg-amber-600/90', glow: 'hover:border-amber-300', href: '/home#crafts' },
+                { src: '/images/badami_sunset_aerial.png', label: 'Heritage Watch', tag: 'Civic AI', color: 'bg-teal-700/90', glow: 'hover:border-teal-300', href: '/heritage-watch' },
+              ].map(({ src, label, tag, color, glow, href }) => (
+                <Link
+                  key={label}
+                  href={href}
+                  className={`group relative w-36 sm:w-44 h-16 sm:h-20 rounded-xl overflow-hidden shrink-0 border border-white/20 ${glow} transition-all duration-300 hover:scale-[1.04] vatapi-card-ripple`}
+                  style={{ '--ripple-x': '50%', '--ripple-y': '50%' } as React.CSSProperties}
+                  onMouseMove={e => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    e.currentTarget.style.setProperty('--ripple-x', `${((e.clientX - rect.left) / rect.width * 100)}%`);
+                    e.currentTarget.style.setProperty('--ripple-y', `${((e.clientY - rect.top) / rect.height * 100)}%`);
+                  }}
+                >
+                  <Image src={src} alt={label} fill className="object-cover group-hover:scale-110 transition-transform duration-500 brightness-[0.72]" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                  <div className="absolute bottom-1.5 left-2 right-2">
+                    <span className={`inline-block px-1 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider ${color} text-white mb-0.5`}>{tag}</span>
+                    <p className="text-[10px] sm:text-xs font-semibold text-white truncate leading-tight">{label}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
 
-      <OllamaChatModal
-        isOpen={isChatModalOpen}
-        onClose={() => setIsChatModalOpen(false)}
-        defaultPrompt={chatPromptPreload}
-      />
-    </div>
+          {/* Scroll indicator — teal pulse line */}
+          <div
+            className={`mx-auto w-12 h-px rounded-full transition-opacity duration-700 ${scrolled ? 'opacity-0' : 'opacity-100'}`}
+            style={{ background: 'linear-gradient(90deg, transparent, rgba(137,245,231,0.85), transparent)' }}
+            aria-hidden="true"
+          >
+            <div
+              className="h-px w-full rounded-full animate-pulse"
+              style={{ background: 'rgba(137,245,231,0.6)', animationDuration: '1.8s' }}
+            />
+          </div>
+        </div>
+      </div>
+    </main>
   );
 }

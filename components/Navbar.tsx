@@ -18,12 +18,12 @@ export default function Navbar({ onOpenReportModal, onOpenChatModal, activeSecti
       <div className="h-20 max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between gap-4">
         {/* Brand */}
         <div className="flex items-center gap-4 shrink-0">
-          <Link href="/" className="flex items-center gap-3 group">
+          <Link href="/home" className="flex items-center gap-3 group">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#9a452c] to-[#00685f] flex items-center justify-center text-white font-serif font-bold text-xl shadow-sm transition-transform group-hover:scale-105">
               V
             </div>
             <div className="flex flex-col">
-              <span className="font-serif text-2xl font-bold text-[#9a452c] tracking-tight leading-none">
+              <span className="vatapi-nav-logo font-serif text-2xl font-bold text-[#9a452c] tracking-tight leading-none">
                 Vatapi
               </span>
               <span className="text-[11px] text-[#6d7a77] uppercase tracking-wider font-semibold mt-0.5">
@@ -36,7 +36,7 @@ export default function Navbar({ onOpenReportModal, onOpenChatModal, activeSecti
         {/* Navigation Links */}
         <nav className="hidden lg:flex items-center gap-1 bg-[#efeeeb]/70 p-1 rounded-xl">
           <Link
-            href="/"
+            href="/home"
             className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all ${
               activeSection === 'home'
                 ? 'bg-white text-[#00685f] shadow-xs'
