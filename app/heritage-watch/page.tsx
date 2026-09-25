@@ -16,6 +16,7 @@ import {
   stopReadingOutLoud,
 } from '@/lib/whisperService';
 import MicroCrowdfundingModal from '@/components/MicroCrowdfundingModal';
+import BigScreenComplaintModal from '@/components/BigScreenComplaintModal';
 
 // Dynamically import Leaflet map (no SSR)
 const HeritageMap = dynamic(() => import('@/components/HeritageMap'), { ssr: false });
@@ -61,61 +62,247 @@ const GOVERNMENT_OFFICIALS: Record<string, string> = {
   'Badami TMC & Taluk Revenue': 'Taluk MLA B. B. Chimmanakatti',
 };
 
-// Fallback seed data
+// Fallback seed data (Comprehensive Multi-Lane Dataset)
 const FALLBACK_ISSUES: Issue[] = [
+  // 🏛️ 1. GOVERNMENT COMPLAINTS (ASI Dharwad & TMC Civic Infrastructure)
   {
-    id: 'demo-1', title: 'Fissure observed on lintel beam near Cave No. 3 western portico after heavy seepage',
-    description: 'Automated high-res photogrammetry detected 94% confidence surface attrition. Micro-fissure displaying mineral runoff during unseasonal rains near the Mahavishnu relief panel.',
-    category: 'Structural Damage', severity: 'high', jurisdiction: 'ASI Dharwad Circle (Superintending Archaeologist)',
-    status: 'in_progress', photo_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA2yMc0QTkYGg81TktaXl2DnNSBQ2vs1XQio9HY8VWQvAGYpwh4jdFfjw3DO2oF6a1YXBACNfwfazoyRjx9SSC03P91SkYVYL1-FQVw_mK3lWIbXHRENLJl1tL3dfk9wz0khPvUZZMhYgN8mo25WYwLea0Mg92F2igK4nwMT_eVUiuQlr1imrK0mlNMRE8Ms8NNMczTDtAfhZXpfpaZsGeaFR2oQsaaS-LpvjNmS8aEFpi8dLCdR5qy',
-    upvotes: 7, escalation_deadline: new Date(Date.now() + 14 * 3600000).toISOString(), resolution_lane: 'government',
-    latitude: 15.9187, longitude: 75.6784, ai_confidence: 98.2, node_hash: '0x4f8a2bc1...b19', created_at: new Date(Date.now() - 2 * 3600000).toISOString(),
+    id: 'gov-1',
+    title: 'Fissure observed on lintel beam near Cave No. 3 western portico after heavy seepage',
+    description: 'Automated high-res photogrammetry detected 94% confidence surface attrition. Micro-fissure displaying mineral runoff during unseasonal rains near the Mahavishnu relief panel. Statutory ASI notice issued for chemical poultice & resin consolidation.',
+    category: 'Structural Damage',
+    severity: 'high',
+    jurisdiction: 'ASI Dharwad Circle (Superintending Archaeologist)',
+    status: 'in_progress',
+    photo_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA2yMc0QTkYGg81TktaXl2DnNSBQ2vs1XQio9HY8VWQvAGYpwh4jdFfjw3DO2oF6a1YXBACNfwfazoyRjx9SSC03P91SkYVYL1-FQVw_mK3lWIbXHRENLJl1tL3dfk9wz0khPvUZZMhYgN8mo25WYwLea0Mg92F2igK4nwMT_eVUiuQlr1imrK0mlNMRE8Ms8NNMczTDtAfhZXpfpaZsGeaFR2oQsaaS-LpvjNmS8aEFpi8dLCdR5qy',
+    upvotes: 18,
+    escalation_deadline: new Date(Date.now() + 14 * 3600000).toISOString(),
+    resolution_lane: 'government',
+    latitude: 15.9187,
+    longitude: 75.6784,
+    ai_confidence: 98.2,
+    node_hash: '0x4f8a2bc19a82b19',
+    created_at: new Date(Date.now() - 2 * 3600000).toISOString(),
   },
   {
-    id: 'demo-2', title: 'Commercial plastic accumulation along North Shore ghats obstructing pilgrim pathways',
-    description: 'Local Guide Shivakumar reported surge in weekend pilgrims leading to discarded water bottles and packaging along the Agastya Tirtha North Ghat stone steps.',
-    category: 'Sanitation & Waste', severity: 'medium', jurisdiction: 'Badami Town Municipal Council (TMC)',
-    status: 'reported', photo_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDGNoJjcJImomzEAE5Ddrh30d5MDmPX1xEZD6a_70J_pLPVo12huXvInxBnBNI8niYSS8vLXJ4Db95_fxyzB3a3LpSmWW-cUlkdqjWLgcGfCZ2s35s_NKTch2Lk0BavbDFH5Pnua1sgDjZhLAUDLyTQ7rvxjL-ldrGjf8o8aLAY0Reqvj-brRkAdEQqkOnFBfQsWHv6h8rwBJIvl-glYTwnUBPUoZRlLubajwYwE_sgNqM9NMXM6Ai_',
-    upvotes: 12, escalation_deadline: new Date(Date.now() + 42 * 3600000).toISOString(), resolution_lane: 'community',
-    latitude: 15.9210, longitude: 75.6810, ai_confidence: 92.1, node_hash: '0x7c3d89f2...a42', created_at: new Date(Date.now() - 5 * 3600000).toISOString(),
+    id: 'gov-2',
+    title: 'Foundation slab subsidence near Nandi Mandapa at Pattadakal Virupaksha Complex',
+    description: 'Groundwater infiltration from Malaprabha river buffer zone causing 4.2mm differential settlement on the western foundation plinth. Structural engineers dispatched for soil stabilization grouting.',
+    category: 'Structural Damage',
+    severity: 'critical',
+    jurisdiction: 'Pattadakal Temple Authority',
+    status: 'in_progress',
+    photo_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCR5tJ1aUzEbjEqzS6CKoY0zf4QkxfznFuN2me-2AbrchGmBu6cIoQTjS6wu12P09yVDKgRCqHeKhiKa-VpBtToPfcB_DcwZBoT1p2SUTqjZn8IpxRy_NsdO8qNmVg7166ET0dh_AYQsR7_L8nSuG3KaFwZkb_j19WpQBbQSzqbVNSi9xjdv44ICyzUq9-5Re2t4WNKE_Bhl7SJ-MqRFJCjc8Z8Fvt3XOqkTG0YNt2kC1yG7b4y7IDt',
+    upvotes: 27,
+    escalation_deadline: new Date(Date.now() + 6 * 3600000).toISOString(),
+    resolution_lane: 'government',
+    latitude: 16.0300,
+    longitude: 75.8230,
+    ai_confidence: 97.4,
+    node_hash: '0x3c99a8f27e1b42d',
+    created_at: new Date(Date.now() - 10 * 3600000).toISOString(),
   },
   {
-    id: 'demo-3', title: 'Unauthorized tourist tempo parking blocking emergency heritage buffer zone at Pattadakal',
-    description: 'CCTV AI auto-detected unauthorized commercial tourist minivans parked blocking the pedestrian sandstone buffer walkway.',
-    category: 'Encroachment & Transit', severity: 'medium', jurisdiction: 'Bagalkote District Police & Revenue Dept',
-    status: 'in_review', photo_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCR5tJ1aUzEbjEqzS6CKoY0zf4QkxfznFuN2me-2AbrchGmBu6cIoQTjS6wu12P09yVDKgRCqHeKhiKa-VpBtToPfcB_DcwZBoT1p2SUTqjZn8IpxRy_NsdO8qNmVg7166ET0dh_AYQsR7_L8nSuG3KaFwZkb_j19WpQBbQSzqbVNSi9xjdv44ICyzUq9-5Re2t4WNKE_Bhl7SJ-MqRFJCjc8Z8Fvt3XOqkTG0YNt2kC1yG7b4y7IDt',
-    upvotes: 5, escalation_deadline: new Date(Date.now() + 58 * 3600000).toISOString(), resolution_lane: 'government',
-    latitude: 16.0300, longitude: 75.8230, ai_confidence: 89.4, node_hash: '0x9e1f4ab3...c78', created_at: new Date(Date.now() - 9 * 3600000).toISOString(),
+    id: 'gov-3',
+    title: 'Weathering deterioration on Bhutanatha Temple stone carvings east facade - ESCALATED',
+    description: 'Heritage conservation assessment overdue by 24 hours. Accelerated stone surface erosion and lichen micro-crust on east-facing Nandi relief carvings facing Agastya Tirtha lake. Statutory DC intervention flagged.',
+    category: 'Structural Damage',
+    severity: 'critical',
+    jurisdiction: 'ASI Dharwad Circle (Superintending Archaeologist)',
+    status: 'escalated',
+    photo_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCkwo1f9gAG9Om4lccDIsTzyt7qtIfi1wsgM1aWG947aSVkxZEL2qRZtJuA1ETylwFagKwEALXaHGpnlja0r6_0cGiccHp4CH8UDADRvJ5vs476sRStg6e09zT2jxggCfUQSBLYisKg4o9b53Xzd2S96T7pr2DjsfhNvy_Mvy-I0ydpv5ttYkk3OCAy-9bUksv2FKQuv3-d7R-gQt8voVenN9eO1BL_sFY_UpGaSOTSLdkgqw7i6xBr',
+    upvotes: 34,
+    escalation_deadline: new Date(Date.now() - 4 * 3600000).toISOString(),
+    resolution_lane: 'government',
+    latitude: 15.9210,
+    longitude: 75.6770,
+    ai_confidence: 96.8,
+    node_hash: '0xfe22d8471e91c01',
+    created_at: new Date(Date.now() - 72 * 3600000).toISOString(),
   },
   {
-    id: 'demo-4', title: 'Restored QR code interpretive plaque at Aihole Lad Khan Temple with trilingual Kannada audio guide link',
-    description: 'ASI Dharwad & Civic Volunteers successfully installed refurbished brass and dark granite interpretive plaque with Kannada, English and Braille inscriptions.',
-    category: 'Monument Signage', severity: 'low', jurisdiction: 'ASI Dharwad & Civic Volunteers',
-    status: 'resolved', photo_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCkwo1f9gAG9Om4lccDIsTzyt7qtIfi1wsgM1aWG947aSVkxZEL2qRZtJuA1ETylwFagKwEALXaHGpnlja0r6_0cGiccHp4CH8UDADRvJ5vs476sRStg6e09zT2jxggCfUQSBLYisKg4o9b53Xzd2S96T7pr2DjsfhNvy_Mvy-I0ydpv5ttYkk3OCAy-9bUksv2FKQuv3-d7R-gQt8voVenN9eO1BL_sFY_UpGaSOTSLdkgqw7i6xBr',
-    upvotes: 22, resolution_lane: 'community', latitude: 16.015, longitude: 75.8819, ai_confidence: 97.6, node_hash: '0x8f2a...c39', created_at: new Date(Date.now() - 24 * 3600000).toISOString(),
+    id: 'gov-4',
+    title: 'Unauthorized commercial tourist tempo parking blocking emergency heritage buffer zone at Pattadakal',
+    description: 'CCTV AI auto-detected unauthorized commercial tourist minivans parked blocking the pedestrian sandstone buffer walkway. Notice issued by Bagalkote Traffic Police for vehicular towing.',
+    category: 'Encroachment & Transit',
+    severity: 'medium',
+    jurisdiction: 'Bagalkote District Police & Revenue Dept',
+    status: 'in_review',
+    photo_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCR5tJ1aUzEbjEqzS6CKoY0zf4QkxfznFuN2me-2AbrchGmBu6cIoQTjS6wu12P09yVDKgRCqHeKhiKa-VpBtToPfcB_DcwZBoT1p2SUTqjZn8IpxRy_NsdO8qNmVg7166ET0dh_AYQsR7_L8nSuG3KaFwZkb_j19WpQBbQSzqbVNSi9xjdv44ICyzUq9-5Re2t4WNKE_Bhl7SJ-MqRFJCjc8Z8Fvt3XOqkTG0YNt2kC1yG7b4y7IDt',
+    upvotes: 11,
+    escalation_deadline: new Date(Date.now() + 38 * 3600000).toISOString(),
+    resolution_lane: 'government',
+    latitude: 16.0310,
+    longitude: 75.8240,
+    ai_confidence: 89.4,
+    node_hash: '0x9e1f4ab3c78a104',
+    created_at: new Date(Date.now() - 8 * 3600000).toISOString(),
   },
   {
-    id: 'demo-5', title: 'Weathering on Bhutanatha Temple east facade - ESCALATED',
-    description: 'Heritage conservation assessment overdue. Accelerated stone surface erosion on east-facing Nandi relief carvings.',
-    category: 'Structural Damage', severity: 'critical', jurisdiction: 'ASI Dharwad Circle (Superintending Archaeologist)',
-    status: 'escalated', upvotes: 15, escalation_deadline: new Date(Date.now() - 2 * 3600000).toISOString(), resolution_lane: 'government',
-    latitude: 15.9210, longitude: 75.6770, ai_confidence: 96.8, node_hash: '0xfe22...e91', created_at: new Date(Date.now() - 72 * 3600000).toISOString(),
+    id: 'gov-5',
+    title: 'Surface abrasion and visitor touch attrition on Aihole Durga Temple apsidal colonnade frieze',
+    description: 'Lack of barrier rope leading to physical tactile abrasion of 7th-century celestial gandharva relief panels. Protective brass stanchions requisitioned under ASI annual conservation budget.',
+    category: 'Structural Damage',
+    severity: 'medium',
+    jurisdiction: 'ASI Dharwad Circle (Superintending Archaeologist)',
+    status: 'reported',
+    photo_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA2yMc0QTkYGg81TktaXl2DnNSBQ2vs1XQio9HY8VWQvAGYpwh4jdFfjw3DO2oF6a1YXBACNfwfazoyRjx9SSC03P91SkYVYL1-FQVw_mK3lWIbXHRENLJl1tL3dfk9wz0khPvUZZMhYgN8mo25WYwLea0Mg92F2igK4nwMT_eVUiuQlr1imrK0mlNMRE8Ms8NNMczTDtAfhZXpfpaZsGeaFR2oQsaaS-LpvjNmS8aEFpi8dLCdR5qy',
+    upvotes: 23,
+    escalation_deadline: new Date(Date.now() + 48 * 3600000).toISOString(),
+    resolution_lane: 'government',
+    latitude: 16.0155,
+    longitude: 75.8820,
+    ai_confidence: 94.2,
+    node_hash: '0x7b11a93e4f0288c',
+    created_at: new Date(Date.now() - 15 * 3600000).toISOString(),
+  },
+
+  // 📈 2. INVESTOR COMPLAINTS (Demand Evidence & Civic PPP Opportunities)
+  {
+    id: 'inv-1',
+    title: 'Severe Lack of Hygienic Traditional Dining & Jolada Rotti Kitchens Near Pattadakal Complex',
+    description: '48 verified tourists logged complaints about the total absence of seated dining, hygienic drinking water, and authentic North Karnataka culinary options within 3 km of the UNESCO World Heritage cluster. Vetted as a high-demand PPP restaurant concession.',
+    category: 'Culinary & Hospitality',
+    severity: 'high',
+    jurisdiction: 'Pattadakal Temple Authority',
+    status: 'in_progress',
+    photo_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCkwo1f9gAG9Om4lccDIsTzyt7qtIfi1wsgM1aWG947aSVkxZEL2qRZtJuA1ETylwFagKwEALXaHGpnlja0r6_0cGiccHp4CH8UDADRvJ5vs476sRStg6e09zT2jxggCfUQSBLYisKg4o9b53Xzd2S96T7pr2DjsfhNvy_Mvy-I0ydpv5ttYkk3OCAy-9bUksv2FKQuv3-d7R-gQt8voVenN9eO1BL_sFY_UpGaSOTSLdkgqw7i6xBr',
+    upvotes: 48,
+    escalation_deadline: new Date(Date.now() + 72 * 3600000).toISOString(),
+    resolution_lane: 'investor',
+    latitude: 16.0315,
+    longitude: 75.8250,
+    ai_confidence: 95.8,
+    node_hash: '0x1a8f9c2d4e8b031',
+    created_at: new Date(Date.now() - 12 * 3600000).toISOString(),
   },
   {
-    id: 'investor-1', title: 'Fissure on Cave No. 3 Pillar 4 bracket under monsoon humidity stress',
-    description: 'Sub-surface sandstone exfoliation from sustained 84% humidity and weekend footfall harmonic resonance. Micro-crowdfunding active for stonecraft micro-grouting.',
-    category: 'Structural Damage', severity: 'high', jurisdiction: 'ASI Dharwad Circle (Superintending Archaeologist)',
-    status: 'in_progress', photo_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA2yMc0QTkYGg81TktaXl2DnNSBQ2vs1XQio9HY8VWQvAGYpwh4jdFfjw3DO2oF6a1YXBACNfwfazoyRjx9SSC03P91SkYVYL1-FQVw_mK3lWIbXHRENLJl1tL3dfk9wz0khPvUZZMhYgN8mo25WYwLea0Mg92F2igK4nwMT_eVUiuQlr1imrK0mlNMRE8Ms8NNMczTDtAfhZXpfpaZsGeaFR2oQsaaS-LpvjNmS8aEFpi8dLCdR5qy',
-    upvotes: 41, escalation_deadline: new Date(Date.now() + 48 * 3600000).toISOString(), resolution_lane: 'investor',
-    latitude: 15.9189, longitude: 75.6787, ai_confidence: 98.4, node_hash: '0x4f8a...b19', created_at: new Date(Date.now() - 8 * 3600000).toISOString(),
+    id: 'inv-2',
+    title: 'Zero Verified Boutique Heritage Homestays in Aihole Forcing 92% Tourists to Exit Before Dusk',
+    description: '32 international and domestic cultural travellers demanded overnight lodging in Aihole village to photograph sunrise over Durga temple and attend stone-carving workshops. Projected venture ROI: 24% IRR with local village stakeholder partnerships.',
+    category: 'Eco-Tourism Accommodation',
+    severity: 'medium',
+    jurisdiction: 'Hungund Panchayat & Taluk Revenue',
+    status: 'reported',
+    photo_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCR5tJ1aUzEbjEqzS6CKoY0zf4QkxfznFuN2me-2AbrchGmBu6cIoQTjS6wu12P09yVDKgRCqHeKhiKa-VpBtToPfcB_DcwZBoT1p2SUTqjZn8IpxRy_NsdO8qNmVg7166ET0dh_AYQsR7_L8nSuG3KaFwZkb_j19WpQBbQSzqbVNSi9xjdv44ICyzUq9-5Re2t4WNKE_Bhl7SJ-MqRFJCjc8Z8Fvt3XOqkTG0YNt2kC1yG7b4y7IDt',
+    upvotes: 32,
+    escalation_deadline: new Date(Date.now() + 84 * 3600000).toISOString(),
+    resolution_lane: 'investor',
+    latitude: 16.0160,
+    longitude: 75.8830,
+    ai_confidence: 93.6,
+    node_hash: '0x992fa1e8b4c027f',
+    created_at: new Date(Date.now() - 18 * 3600000).toISOString(),
   },
   {
-    id: 'investor-2', title: 'Pattadakal Virupaksha Temple bas-relief frieze salt crusting & mortar detachment',
+    id: 'inv-3',
+    title: 'Extreme Afternoon Heat & Complete Absence of Shaded Eco-Hydration Kiosks at Badami Cave Base',
+    description: '54 complaints recorded regarding severe afternoon heat stress (38°C) and lack of clean RO water dispensers. Proposing solar-canopied hydration stations offering terracotta bottle refills and millet refreshments.',
+    category: 'Civic Amenity PPP',
+    severity: 'high',
+    jurisdiction: 'Badami Town Municipal Council (TMC)',
+    status: 'in_progress',
+    photo_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDGNoJjcJImomzEAE5Ddrh30d5MDmPX1xEZD6a_70J_pLPVo12huXvInxBnBNI8niYSS8vLXJ4Db95_fxyzB3a3LpSmWW-cUlkdqjWLgcGfCZ2s35s_NKTch2Lk0BavbDFH5Pnua1sgDjZhLAUDLyTQ7rvxjL-ldrGjf8o8aLAY0Reqvj-brRkAdEQqkOnFBfQsWHv6h8rwBJIvl-glYTwnUBPUoZRlLubajwYwE_sgNqM9NMXM6Ai_',
+    upvotes: 54,
+    escalation_deadline: new Date(Date.now() + 48 * 3600000).toISOString(),
+    resolution_lane: 'investor',
+    latitude: 15.9180,
+    longitude: 75.6775,
+    ai_confidence: 97.2,
+    node_hash: '0x5d8a01f92e4b311',
+    created_at: new Date(Date.now() - 20 * 3600000).toISOString(),
+  },
+  {
+    id: 'inv-4',
+    title: 'Fissure on Cave No. 3 Pillar 4 bracket under monsoon humidity stress — Micro-Crowdfunding Active',
+    description: 'Sub-surface sandstone exfoliation from sustained 84% humidity and weekend footfall harmonic resonance. Micro-crowdfunding campaign active for master stonecraft micro-grouting. ₹4,650 raised of ₹8,000 target from 82 citizen micro-patrons.',
+    category: 'Structural Damage',
+    severity: 'high',
+    jurisdiction: 'ASI Dharwad Circle (Superintending Archaeologist)',
+    status: 'in_progress',
+    photo_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA2yMc0QTkYGg81TktaXl2DnNSBQ2vs1XQio9HY8VWQvAGYpwh4jdFfjw3DO2oF6a1YXBACNfwfazoyRjx9SSC03P91SkYVYL1-FQVw_mK3lWIbXHRENLJl1tL3dfk9wz0khPvUZZMhYgN8mo25WYwLea0Mg92F2igK4nwMT_eVUiuQlr1imrK0mlNMRE8Ms8NNMczTDtAfhZXpfpaZsGeaFR2oQsaaS-LpvjNmS8aEFpi8dLCdR5qy',
+    upvotes: 82,
+    escalation_deadline: new Date(Date.now() + 48 * 3600000).toISOString(),
+    resolution_lane: 'investor',
+    latitude: 15.9189,
+    longitude: 75.6787,
+    ai_confidence: 98.4,
+    node_hash: '0x4f8a9102c34b119',
+    created_at: new Date(Date.now() - 8 * 3600000).toISOString(),
+  },
+  {
+    id: 'inv-5',
+    title: 'Pattadakal Virupaksha bas-relief frieze salt crusting — Stone Mason Micro-Fund',
     description: 'Capillary dampness from Malaprabha flood buffer causing gypsum leaching on 8th-century Chalukyan friezes. Micro-funding local master stone masons to apply non-invasive poultice.',
-    category: 'Structural Damage', severity: 'medium', jurisdiction: 'Pattadakal Temple Authority',
-    status: 'reported', photo_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCkwo1f9gAG9Om4lccDIsTzyt7qtIfi1wsgM1aWG947aSVkxZEL2qRZtJuA1ETylwFagKwEALXaHGpnlja0r6_0cGiccHp4CH8UDADRvJ5vs476sRStg6e09zT2jxggCfUQSBLYisKg4o9b53Xzd2S96T7pr2DjsfhNvy_Mvy-I0ydpv5ttYkk3OCAy-9bUksv2FKQuv3-d7R-gQt8voVenN9eO1BL_sFY_UpGaSOTSLdkgqw7i6xBr',
-    upvotes: 82, escalation_deadline: new Date(Date.now() + 72 * 3600000).toISOString(), resolution_lane: 'investor',
-    latitude: 16.0305, longitude: 75.8235, ai_confidence: 94.6, node_hash: '0x7c3d...a42', created_at: new Date(Date.now() - 14 * 3600000).toISOString(),
+    category: 'Structural Damage',
+    severity: 'medium',
+    jurisdiction: 'Pattadakal Temple Authority',
+    status: 'reported',
+    photo_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCkwo1f9gAG9Om4lccDIsTzyt7qtIfi1wsgM1aWG947aSVkxZEL2qRZtJuA1ETylwFagKwEALXaHGpnlja0r6_0cGiccHp4CH8UDADRvJ5vs476sRStg6e09zT2jxggCfUQSBLYisKg4o9b53Xzd2S96T7pr2DjsfhNvy_Mvy-I0ydpv5ttYkk3OCAy-9bUksv2FKQuv3-d7R-gQt8voVenN9eO1BL_sFY_UpGaSOTSLdkgqw7i6xBr',
+    upvotes: 41,
+    escalation_deadline: new Date(Date.now() + 72 * 3600000).toISOString(),
+    resolution_lane: 'investor',
+    latitude: 16.0305,
+    longitude: 75.8235,
+    ai_confidence: 94.6,
+    node_hash: '0x7c3d091e4a42b10',
+    created_at: new Date(Date.now() - 14 * 3600000).toISOString(),
+  },
+
+  // 🤝 3. COMMUNITY COMPLAINTS (Eco-Sena Volunteers & Civic Action)
+  {
+    id: 'com-1',
+    title: 'Commercial plastic accumulation along North Shore ghats obstructing pilgrim pathways',
+    description: 'Local Guide Shivakumar reported surge in weekend pilgrims leading to discarded water bottles and packaging along the Agastya Tirtha North Ghat stone steps. Adopted by Eco-Sena Bagalkote for weekend cleanup drive.',
+    category: 'Sanitation & Waste',
+    severity: 'medium',
+    jurisdiction: 'Badami Town Municipal Council (TMC)',
+    status: 'in_progress',
+    photo_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDGNoJjcJImomzEAE5Ddrh30d5MDmPX1xEZD6a_70J_pLPVo12huXvInxBnBNI8niYSS8vLXJ4Db95_fxyzB3a3LpSmWW-cUlkdqjWLgcGfCZ2s35s_NKTch2Lk0BavbDFH5Pnua1sgDjZhLAUDLyTQ7rvxjL-ldrGjf8o8aLAY0Reqvj-brRkAdEQqkOnFBfQsWHv6h8rwBJIvl-glYTwnUBPUoZRlLubajwYwE_sgNqM9NMXM6Ai_',
+    upvotes: 42,
+    escalation_deadline: new Date(Date.now() + 24 * 3600000).toISOString(),
+    resolution_lane: 'community',
+    adopted_by: 'Priya Kulkarni',
+    adopted_group_name: 'Eco-Sena Bagalkote',
+    latitude: 15.9210,
+    longitude: 75.6810,
+    ai_confidence: 92.1,
+    node_hash: '0x7c3d89f2a420911',
+    created_at: new Date(Date.now() - 5 * 3600000).toISOString(),
+  },
+  {
+    id: 'com-2',
+    title: 'Overgrown thorny shrubs and invasive creepers obscuring Cave 4 approach pathway',
+    description: 'Dense acacia growth and loose rock scree impeding accessibility for senior tourists and wheelchair users on the path from Cave 3 to Cave 4 Jain basadi. Open for volunteer trail clearing.',
+    category: 'Trail Maintenance',
+    severity: 'medium',
+    jurisdiction: 'Badami Town Municipal Council (TMC)',
+    status: 'reported',
+    photo_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA2yMc0QTkYGg81TktaXl2DnNSBQ2vs1XQio9HY8VWQvAGYpwh4jdFfjw3DO2oF6a1YXBACNfwfazoyRjx9SSC03P91SkYVYL1-FQVw_mK3lWIbXHRENLJl1tL3dfk9wz0khPvUZZMhYgN8mo25WYwLea0Mg92F2igK4nwMT_eVUiuQlr1imrK0mlNMRE8Ms8NNMczTDtAfhZXpfpaZsGeaFR2oQsaaS-LpvjNmS8aEFpi8dLCdR5qy',
+    upvotes: 35,
+    escalation_deadline: new Date(Date.now() + 48 * 3600000).toISOString(),
+    resolution_lane: 'community',
+    latitude: 15.9192,
+    longitude: 75.6790,
+    ai_confidence: 93.4,
+    node_hash: '0x44a1e902b88c122',
+    created_at: new Date(Date.now() - 16 * 3600000).toISOString(),
+  },
+  {
+    id: 'com-3',
+    title: 'Restored QR code interpretive plaque at Aihole Lad Khan Temple with trilingual Kannada audio guide link',
+    description: 'ASI Dharwad & Civic Volunteers successfully installed refurbished brass and dark granite interpretive plaque with Kannada, English and Braille inscriptions. Verified by community auditors.',
+    category: 'Monument Signage',
+    severity: 'low',
+    jurisdiction: 'ASI Dharwad & Civic Volunteers',
+    status: 'resolved',
+    photo_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCkwo1f9gAG9Om4lccDIsTzyt7qtIfi1wsgM1aWG947aSVkxZEL2qRZtJuA1ETylwFagKwEALXaHGpnlja0r6_0cGiccHp4CH8UDADRvJ5vs476sRStg6e09zT2jxggCfUQSBLYisKg4o9b53Xzd2S96T7pr2DjsfhNvy_Mvy-I0ydpv5ttYkk3OCAy-9bUksv2FKQuv3-d7R-gQt8voVenN9eO1BL_sFY_UpGaSOTSLdkgqw7i6xBr',
+    upvotes: 22,
+    resolution_lane: 'community',
+    latitude: 16.0150,
+    longitude: 75.8819,
+    ai_confidence: 97.6,
+    node_hash: '0x8f2a0194c399b11',
+    created_at: new Date(Date.now() - 24 * 3600000).toISOString(),
   },
 ];
 
@@ -263,6 +450,10 @@ export default function HeritageWatchPage() {
   const [laneFilter, setLaneFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<string>('escalation');
+
+  // Big Screen Detail Modal
+  const [detailedIssue, setDetailedIssue] = useState<Issue | null>(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
 
   // Report Modal
   const [showReportModal, setShowReportModal] = useState(false);
@@ -426,10 +617,15 @@ export default function HeritageWatchPage() {
         .order('created_at', { ascending: false });
 
       if (!error && data && data.length > 0) {
-        setIssues(data);
+        // Merge Supabase rows with FALLBACK_ISSUES so all 3 lanes are always fully populated
+        const existingIds = new Set(data.map((d: any) => d.id));
+        const combined = [...data, ...FALLBACK_ISSUES.filter((f) => !existingIds.has(f.id))];
+        setIssues(combined);
+      } else {
+        setIssues(FALLBACK_ISSUES);
       }
     } catch {
-      // Keep fallback data
+      setIssues(FALLBACK_ISSUES);
     }
   }, []);
 
@@ -571,6 +767,9 @@ export default function HeritageWatchPage() {
     triage: issues.filter(i => i.status === 'in_progress').length,
     resolved: issues.filter(i => ['resolved', 'closed'].includes(i.status)).length,
     escalated: issues.filter(i => i.status === 'escalated').length,
+    government: issues.filter(i => i.resolution_lane === 'government').length,
+    investor: issues.filter(i => i.resolution_lane === 'investor').length,
+    community: issues.filter(i => i.resolution_lane === 'community').length,
   };
 
   // ---------------------
@@ -1060,19 +1259,191 @@ export default function HeritageWatchPage() {
                 </div>
               </div>
 
-              {/* Search */}
-              <div className="relative flex-1 min-w-[260px] max-w-md">
-                <span className="material-symbols-outlined absolute left-3 top-2.5 text-[#6d7a77] text-[18px]">search</span>
-                <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full bg-white text-[#1b1c1a] text-sm pl-10 pr-4 py-2 rounded-lg shadow-xs placeholder:text-[#6d7a77] focus:outline-none focus:ring-2 focus:ring-[#00685f]"
-                  placeholder="Search Incident ID, monument, or hazard..." />
-              </div>
+            {/* Search */}
+            <div className="relative flex-1 min-w-[260px] max-w-md">
+              <span className="material-symbols-outlined absolute left-3 top-2.5 text-[#6d7a77] text-[18px]">search</span>
+              <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
+                className="w-full bg-white text-[#1b1c1a] text-sm pl-10 pr-4 py-2 rounded-lg shadow-xs placeholder:text-[#6d7a77] focus:outline-none focus:ring-2 focus:ring-[#00685f]"
+                placeholder="Search Incident ID, monument, or hazard..." />
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* MAP + LEDGER SPLIT */}
-        <section className="max-w-[1360px] w-full mx-auto px-6 lg:px-12 py-6">
+      {/* ======================================================== */}
+      {/* SEPARATE MULTI-LANE NAVIGATION BAR FOR HERITAGE WATCH */}
+      {/* ======================================================== */}
+      <section className="max-w-[1360px] w-full mx-auto px-6 lg:px-12 pt-6">
+        <div className="bg-white rounded-3xl p-5 shadow-sm border border-[#eae8e5] space-y-3">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#9a452c] flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-[15px]">view_kanban</span>
+                Multi-Perspective Civic Navigation
+              </span>
+              <h2 className="text-xl font-serif font-bold text-[#1b1c1a] mt-0.5">
+                Complaint Lanes & Stakeholder Grid
+              </h2>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-[#6d7a77] font-medium bg-[#f5f3f0] px-3 py-1 rounded-full border border-[#eae8e5]">
+                Showing <strong>{filteredIssues.length}</strong> complaints in view
+              </span>
+            </div>
+          </div>
+
+          {/* 4 Dedicated Navigation Tabs */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            {/* 1. All Complaints */}
+            <button
+              type="button"
+              onClick={() => setLaneFilter('all')}
+              className={`flex items-center gap-3 p-3 rounded-2xl border transition-all text-left ${
+                laneFilter === 'all'
+                  ? 'bg-slate-900 text-white border-slate-900 shadow-md scale-[1.01]'
+                  : 'bg-stone-50 hover:bg-stone-100 text-[#1b1c1a] border-[#eae8e5]'
+              }`}
+            >
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                laneFilter === 'all' ? 'bg-white/20 text-white' : 'bg-white text-slate-700 shadow-2xs'
+              }`}>
+                <span className="material-symbols-outlined text-lg">hub</span>
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs font-bold truncate">All Incidents</span>
+                  <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full ${
+                    laneFilter === 'all' ? 'bg-white/20 text-white' : 'bg-[#eae8e5] text-[#3d4947]'
+                  }`}>
+                    {counts.all}
+                  </span>
+                </div>
+                <p className={`text-[10px] truncate mt-0.5 ${laneFilter === 'all' ? 'text-slate-300' : 'text-[#6d7a77]'}`}>
+                  Unified Civic Grid
+                </p>
+              </div>
+            </button>
+
+            {/* 2. Government Complaints */}
+            <button
+              type="button"
+              onClick={() => setLaneFilter('government')}
+              className={`flex items-center gap-3 p-3 rounded-2xl border transition-all text-left ${
+                laneFilter === 'government'
+                  ? 'bg-[#9a452c] text-white border-[#9a452c] shadow-md scale-[1.01]'
+                  : 'bg-orange-50/60 hover:bg-orange-50 text-[#1b1c1a] border-orange-200'
+              }`}
+            >
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                laneFilter === 'government' ? 'bg-white/20 text-white' : 'bg-white text-[#9a452c] shadow-2xs'
+              }`}>
+                <span className="material-symbols-outlined text-lg">account_balance</span>
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs font-bold truncate">Government</span>
+                  <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full ${
+                    laneFilter === 'government' ? 'bg-white/20 text-white' : 'bg-orange-200 text-[#9a452c]'
+                  }`}>
+                    {counts.government}
+                  </span>
+                </div>
+                <p className={`text-[10px] truncate mt-0.5 ${laneFilter === 'government' ? 'text-amber-100' : 'text-[#6d7a77]'}`}>
+                  ASI Dharwad & TMC SLAs
+                </p>
+              </div>
+            </button>
+
+            {/* 3. Investor Complaints */}
+            <button
+              type="button"
+              onClick={() => setLaneFilter('investor')}
+              className={`flex items-center gap-3 p-3 rounded-2xl border transition-all text-left ${
+                laneFilter === 'investor'
+                  ? 'bg-[#d97706] text-white border-[#d97706] shadow-md scale-[1.01]'
+                  : 'bg-amber-50/60 hover:bg-amber-50 text-[#1b1c1a] border-amber-200'
+              }`}
+            >
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                laneFilter === 'investor' ? 'bg-white/20 text-white' : 'bg-white text-[#d97706] shadow-2xs'
+              }`}>
+                <span className="material-symbols-outlined text-lg">trending_up</span>
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs font-bold truncate">Investor Demand</span>
+                  <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full ${
+                    laneFilter === 'investor' ? 'bg-white/20 text-white' : 'bg-amber-200 text-amber-900'
+                  }`}>
+                    {counts.investor}
+                  </span>
+                </div>
+                <p className={`text-[10px] truncate mt-0.5 ${laneFilter === 'investor' ? 'text-amber-100' : 'text-[#6d7a77]'}`}>
+                  Demand Evidence & PPPs
+                </p>
+              </div>
+            </button>
+
+            {/* 4. Community Complaints */}
+            <button
+              type="button"
+              onClick={() => setLaneFilter('community')}
+              className={`flex items-center gap-3 p-3 rounded-2xl border transition-all text-left ${
+                laneFilter === 'community'
+                  ? 'bg-[#059669] text-white border-[#059669] shadow-md scale-[1.01]'
+                  : 'bg-emerald-50/60 hover:bg-emerald-50 text-[#1b1c1a] border-emerald-200'
+              }`}
+            >
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                laneFilter === 'community' ? 'bg-white/20 text-white' : 'bg-white text-[#059669] shadow-2xs'
+              }`}>
+                <span className="material-symbols-outlined text-lg">groups</span>
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs font-bold truncate">Community Action</span>
+                  <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full ${
+                    laneFilter === 'community' ? 'bg-white/20 text-white' : 'bg-emerald-200 text-emerald-900'
+                  }`}>
+                    {counts.community}
+                  </span>
+                </div>
+                <p className={`text-[10px] truncate mt-0.5 ${laneFilter === 'community' ? 'text-emerald-100' : 'text-[#6d7a77]'}`}>
+                  Eco-Sena & Cleanups
+                </p>
+              </div>
+            </button>
+          </div>
+
+          {/* Context Banner */}
+          <div className="p-3 rounded-2xl bg-[#f5f3f0] border border-[#eae8e5] text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[#3d4947]">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-base text-[#9a452c]">info</span>
+              <span>
+                {laneFilter === 'government' && (
+                  <><strong>Government Lane Active:</strong> Displaying statutory structural hazards and archaeological escalations routed to ASI Dharwad with 48h SLA clocks.</>
+                )}
+                {laneFilter === 'investor' && (
+                  <><strong>Investor Lane Active:</strong> Displaying validated tourist demand evidence (10+ upvotes) vetted for private capital, micro-concessions and crowdfunding.</>
+                )}
+                {laneFilter === 'community' && (
+                  <><strong>Community Action Lane Active:</strong> Displaying open sanitation, trail cleanup and signage issues eligible for volunteer group adoption.</>
+                )}
+                {laneFilter === 'all' && (
+                  <><strong>Unified Ledger Active:</strong> Cross-stakeholder grid integrating government notices, investor demand gaps, and community cleanups.</>
+                )}
+              </span>
+            </div>
+            <span className="text-[11px] font-bold text-[#00685f] shrink-0 flex items-center gap-1">
+              <span className="material-symbols-outlined text-[14px]">open_in_full</span>
+              <span>Click any complaint card for full Big Screen description</span>
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* MAP + LEDGER SPLIT */}
+      <section className="max-w-[1360px] w-full mx-auto px-6 lg:px-12 py-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
             {/* LEFT: Map (60%) */}
@@ -1201,11 +1572,26 @@ export default function HeritageWatchPage() {
 
                   return (
                     <article key={issue.id}
-                      className={`bg-white rounded-xl p-4 shadow-xs hover:shadow-md transition-all relative overflow-hidden ${isResolved ? 'opacity-80' : ''}`}>
+                      onClick={() => {
+                        setDetailedIssue(issue);
+                        setShowDetailModal(true);
+                      }}
+                      className={`bg-white rounded-xl p-4 shadow-xs hover:shadow-md hover:border-[#00685f]/40 border border-transparent transition-all relative overflow-hidden cursor-pointer group/card ${isResolved ? 'opacity-80' : ''}`}>
                       {/* Severity Stripe */}
                       <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${getSeverityStripeColor(issue.severity, issue.status)}`}></div>
 
                       <div className="flex flex-col gap-2 pl-2">
+                        {/* Big Screen Inspection Hint Banner */}
+                        <div className="flex items-center justify-between pb-1 text-[11px] text-[#6d7a77] border-b border-[#f5f3f0]">
+                          <span className="font-mono text-[10px] text-[#00685f] bg-[#00685f]/10 px-1.5 py-0.5 rounded font-bold">
+                            #{issue.id}
+                          </span>
+                          <span className="text-[#00685f] group-hover/card:text-[#004f47] font-semibold flex items-center gap-1 text-[11px] transition-colors">
+                            <span className="material-symbols-outlined text-[14px]">open_in_full</span>
+                            Click for Big Screen View
+                          </span>
+                        </div>
+
                         {/* Badges & Escalation Clock */}
                         <div className="flex flex-wrap items-center justify-between gap-1">
                           <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold flex items-center gap-1 ${badge.bg}`}>
@@ -1300,7 +1686,8 @@ export default function HeritageWatchPage() {
                           {/* Read Out Loud Voice Dispatch & Summary */}
                           <button
                             type="button"
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               const textToSpeak = `${issue.title}. Category: ${issue.category}. Assigned jurisdiction: ${issue.jurisdiction}. ${issue.description || ''}`;
                               if (activeSpeakingIssueId === issue.id) {
                                 stopReadingOutLoud();
@@ -1330,7 +1717,10 @@ export default function HeritageWatchPage() {
                           {/* Upvote Button (Confirm Issue with trigger & disabled check) */}
                           <button
                             type="button"
-                            onClick={() => handleUpvote(issue.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleUpvote(issue.id);
+                            }}
                             disabled={upvotedIssues.has(issue.id) || upvoteLoading === issue.id}
                             className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${upvotedIssues.has(issue.id)
                                 ? 'bg-[#00685f]/15 text-[#00685f] border border-[#00685f]/30 cursor-not-allowed opacity-90'
@@ -1351,7 +1741,8 @@ export default function HeritageWatchPage() {
                           {issue.resolution_lane === 'investor' && !isResolved && (
                             <button
                               type="button"
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 setCrowdfundingIssue(issue);
                                 setShowCrowdfundingModal(true);
                               }}
@@ -1365,7 +1756,7 @@ export default function HeritageWatchPage() {
 
                           {/* Adopt Button (Community lane - Prompt 4) */}
                           {laneFilter === 'community' && !isResolved && !issue.adopted_by && (
-                            <button type="button" onClick={() => { setAdoptIssueId(issue.id); setShowAdoptModal(true); }}
+                            <button type="button" onClick={(e) => { e.stopPropagation(); setAdoptIssueId(issue.id); setShowAdoptModal(true); }}
                               className="py-1.5 px-3 rounded-lg bg-[#00685f] text-white text-xs font-semibold hover:bg-[#008378] transition-all flex items-center gap-1">
                               <span className="material-symbols-outlined text-[16px]">volunteer_activism</span>
                               Adopt
@@ -1380,7 +1771,16 @@ export default function HeritageWatchPage() {
 
                           {/* Escalate Button (for officials) */}
                           {!isResolved && issue.status !== 'escalated' && issue.severity !== 'low' && (
-                            <button type="button" className="py-1.5 px-3 rounded-lg bg-[#ba1a1a] text-white text-xs font-semibold hover:brightness-110 transition-all flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setToastMessage(`Escalation flag logged for ${issue.title}`);
+                                setToastType('success');
+                                setToastVisible(true);
+                              }}
+                              className="py-1.5 px-3 rounded-lg bg-[#ba1a1a] text-white text-xs font-semibold hover:brightness-110 transition-all flex items-center gap-1"
+                            >
                               <span className="material-symbols-outlined text-[16px]">priority_high</span>
                               Escalate
                             </button>
@@ -1394,7 +1794,15 @@ export default function HeritageWatchPage() {
                               <span className="material-symbols-outlined text-[14px] text-[#00685f]">token</span>
                               Audit: {issue.node_hash.slice(0, 12)}...
                             </span>
-                            <button type="button" className="text-[#00685f] hover:underline font-semibold text-[11px] flex items-center gap-0.5">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setDetailedIssue(issue);
+                                setShowDetailModal(true);
+                              }}
+                              className="text-[#00685f] hover:underline font-semibold text-[11px] flex items-center gap-0.5"
+                            >
                               View Ledger Proof <span className="material-symbols-outlined text-[14px]">arrow_outward</span>
                             </button>
                           </div>
@@ -1917,6 +2325,24 @@ export default function HeritageWatchPage() {
         onClose={() => setShowCrowdfundingModal(false)}
         issue={crowdfundingIssue}
         onDonated={handleCrowdfundingDonationSuccess}
+      />
+
+      {/* Big Screen Pop-Out Complaint Modal */}
+      <BigScreenComplaintModal
+        isOpen={showDetailModal}
+        onClose={() => setShowDetailModal(false)}
+        issue={detailedIssue}
+        onUpvote={handleUpvote}
+        isUpvoted={detailedIssue ? upvotedIssues.has(detailedIssue.id) : false}
+        onOpenCrowdfunding={(iss) => {
+          setCrowdfundingIssue(iss);
+          setShowCrowdfundingModal(true);
+        }}
+        onOpenAdopt={(issId) => {
+          setAdoptIssueId(issId);
+          setShowAdoptModal(true);
+        }}
+        crowdfundingStats={detailedIssue ? (campaignsMap[detailedIssue.id] || { current: 2050, target: 5000, backers: 41 }) : undefined}
       />
 
       {/* Toast */}
