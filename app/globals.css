@@ -256,3 +256,24 @@
   animation: subtle-drift 12s ease-in-out infinite;
 }
 
+/* ── Rich multi-color animated gradient flow ── */
+@keyframes gradient-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient-flow {
+  background-size: 240% 240%;
+  animation: gradient-flow 6s ease infinite;
+}
+
+@keyframes brand-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-3px); }
+}
+
+.animate-brand-float {
+  animation: brand-float 4s ease-in-out infinite;
+}
+
