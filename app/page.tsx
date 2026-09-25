@@ -485,10 +485,10 @@ export default function StartingPage() {
           </div>
         </header>
 
-        {/* ── CENTER COMPACT MINIMALIST GLASS CARD ────────────────── */}
-        <div className="flex-1 flex items-center justify-center px-4 pointer-events-none my-4 z-20">
+        {/* ── LEFT UPPER CORNER COMPACT MINIMALIST GLASS CARD ────────── */}
+        <div className="flex-1 flex items-start justify-start px-5 lg:px-12 pt-4 sm:pt-6 pointer-events-none z-20">
           <div
-            className="glass-card pointer-events-auto text-center max-w-md w-full px-6 py-5 rounded-2xl border border-white/20 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-white/35"
+            className="glass-card pointer-events-auto text-left max-w-sm sm:max-w-md w-full px-5 py-4 sm:px-6 sm:py-5 rounded-2xl border border-white/20 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-white/35"
             style={{
               background: 'rgba(18, 10, 5, 0.65)',
               boxShadow:
