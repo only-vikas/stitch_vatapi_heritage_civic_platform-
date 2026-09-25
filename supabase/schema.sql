@@ -498,4 +498,63 @@ VALUES
 ('Water', 'Agastya Lake East Basin', 7.1, 7.5, 12.0, 0.10, 85, 'https://lh3.googleusercontent.com/aida-public/AB6AXuDmPCnRDXtITFdwoVg2sWR09C1DnHfytvXH3zaAG5htmxy7y5RbOSIIHXNYCXlymr0stXi9xPu7eG1UjIup-L2WeR-1F6h9_8d969sVA9lMNLTmYLeNWIJYv4kGjAt2yNYDr22vpk1M1xE9jaJZX-F2mu50Z91ysTusPEXDMP9U-xQP7p6TcUPQOnfxlIy4WOz4YXmiq-hwfbaNgaDxFtiVnXSk0zh8Cds0ADruwnIYV5XPklbokZGB', 'Bhutanatha temple reflection shoreline. Very low turbidity.', 'Citizen Sentinel Basamma')
 ON CONFLICT DO NOTHING;
 
+-- =========================================================
+-- 9. ENVIRONMENTAL LOGS (The Oracle Predictive AI Engine)
+-- =========================================================
+CREATE TABLE IF NOT EXISTS public.environmental_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    site_name TEXT NOT NULL DEFAULT 'Badami Cave 3',
+    humidity NUMERIC(5,2) NOT NULL,
+    temperature NUMERIC(5,2) NOT NULL,
+    footfall_count INT NOT NULL,
+    date DATE NOT NULL DEFAULT CURRENT_DATE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+);
+
+ALTER TABLE public.environmental_logs ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Public can view environmental logs" ON public.environmental_logs;
+CREATE POLICY "Public can view environmental logs" ON public.environmental_logs FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Service can insert environmental logs" ON public.environmental_logs;
+CREATE POLICY "Service can insert environmental logs" ON public.environmental_logs FOR INSERT WITH CHECK (true);
+
+-- =========================================================
+-- 10. MICRO-CROWDFUNDING ENGINE (Adopt-A-Crack / Investor Lane)
+-- =========================================================
+CREATE TABLE IF NOT EXISTS public.crowdfunding_campaigns (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    issue_id UUID REFERENCES public.issues(id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    target_amount NUMERIC(10,2) NOT NULL DEFAULT 5000.00,
+    current_amount NUMERIC(10,2) NOT NULL DEFAULT 0.00,
+    backers_count INT NOT NULL DEFAULT 0,
+    status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'funded', 'completed')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+);
+
+ALTER TABLE public.crowdfunding_campaigns ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Public can view crowdfunding campaigns" ON public.crowdfunding_campaigns;
+CREATE POLICY "Public can view crowdfunding campaigns" ON public.crowdfunding_campaigns FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public can update crowdfunding campaigns" ON public.crowdfunding_campaigns;
+CREATE POLICY "Public can update crowdfunding campaigns" ON public.crowdfunding_campaigns FOR UPDATE USING (true);
+DROP POLICY IF EXISTS "Public can insert crowdfunding campaigns" ON public.crowdfunding_campaigns;
+CREATE POLICY "Public can insert crowdfunding campaigns" ON public.crowdfunding_campaigns FOR INSERT WITH CHECK (true);
+
+CREATE TABLE IF NOT EXISTS public.donations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    campaign_id UUID REFERENCES public.crowdfunding_campaigns(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    donor_name TEXT DEFAULT 'Anonymous Citizen',
+    amount NUMERIC(10,2) NOT NULL CHECK (amount > 0),
+    note TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+);
+
+ALTER TABLE public.donations ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Public can view donations" ON public.donations;
+CREATE POLICY "Public can view donations" ON public.donations FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public can insert donations" ON public.donations;
+CREATE POLICY "Public can insert donations" ON public.donations FOR INSERT WITH CHECK (true);
+
+
 

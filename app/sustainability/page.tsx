@@ -42,6 +42,23 @@ export default function SustainablePlanningPage() {
   const [nudges, setNudges] = useState<DispersalNudge[]>(BASELINE_NUDGES);
   const [isGeneratingNudge, setIsGeneratingNudge] = useState<boolean>(false);
 
+  // Oracle Predictive AI Alert (Prompt 1)
+  const [predictiveAlert, setPredictiveAlert] = useState<{
+    site_name: string;
+    risk_score: number;
+    predicted_issue: string;
+    preventative_action: string;
+    telemetry_stats?: any;
+    modelUsed?: string;
+  } | null>({
+    site_name: 'Badami Cave 3 (Vishnu Pillar Corridor)',
+    risk_score: 88,
+    predicted_issue: 'Sub-surface sandstone exfoliation from sustained 82-88% humidity condensation cycles and weekend crowd resonance.',
+    preventative_action: 'Micro-grouting with lime-pozzolana slurry needed; activate crowd dispersal nudge to cap hourly cave occupancy under 150 pilgrims.',
+    telemetry_stats: { monitored_days: 30, avg_humidity: '78.4%', avg_temp: '33.7°C', peak_footfall: 4920 },
+    modelUsed: 'Ollama (llama3)',
+  });
+
   // State: Water Sentinel (Prompt 5.1.2)
   const [waterReadings, setWaterReadings] = useState<WaterReading[]>(BASELINE_WATER_READINGS);
   const [currentWaterIndex, setCurrentWaterIndex] = useState<number>(82);
@@ -496,6 +513,38 @@ export default function SustainablePlanningPage() {
                       <p className="text-[11px] text-[#3d4947]">
                         Dynamic routing algorithms shifting visitor streams to prevent cliffside sandstone micro-wear.
                       </p>
+
+                      {/* Predictive Alert Red-Bordered Card (Prompt 1) */}
+                      {predictiveAlert && (
+                        <div className="border-2 border-[#ba1a1a] bg-[#fff5f5] rounded-2xl p-4 shadow-sm relative overflow-hidden space-y-2 mt-1">
+                          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#ba1a1a] via-[#ffb5a0] to-[#ba1a1a]"></div>
+                          <div className="flex flex-wrap items-center justify-between gap-1">
+                            <div className="flex items-center gap-1.5 text-[#ba1a1a]">
+                              <span className="w-2 h-2 rounded-full bg-[#ba1a1a] animate-ping"></span>
+                              <span className="text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+                                <span className="material-symbols-outlined text-[15px]">crisis_alert</span>
+                                Predictive Alert
+                              </span>
+                            </div>
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#ba1a1a]/15 text-[#ba1a1a] border border-[#ba1a1a]/30 flex items-center gap-1">
+                              <span className="material-symbols-outlined text-[12px]">auto_awesome</span>
+                              AI Predicted • 30-Day Forecast
+                            </span>
+                          </div>
+
+                          <div className="flex items-baseline justify-between pt-0.5">
+                            <span className="text-xs font-bold text-[#1b1c1a]">{predictiveAlert.site_name}</span>
+                            <span className="px-2 py-0.2 rounded text-[10px] font-bold bg-[#ba1a1a] text-white">
+                              Risk {predictiveAlert.risk_score}/100
+                            </span>
+                          </div>
+
+                          <div className="text-[11px] text-[#3d4947] space-y-1 bg-white/80 p-2.5 rounded-xl border border-[#ba1a1a]/20">
+                            <div><strong className="text-[#ba1a1a]">Predicted:</strong> {predictiveAlert.predicted_issue}</div>
+                            <div className="pt-1 border-t border-[#eae8e5]"><strong className="text-[#00685f]">Action:</strong> {predictiveAlert.preventative_action}</div>
+                          </div>
+                        </div>
+                      )}
 
                       {/* Nudges List */}
                       <div className="flex flex-col gap-2 mt-1">
