@@ -9,6 +9,12 @@ import { useIssueStore } from '@/context/IssueContext';
 import SuccessToast from '@/components/SuccessToast';
 import { generateNodeHash } from '@/lib/ollama';
 import { useAccessFilter } from '@/lib/accessStore';
+import {
+  transcribeVoiceNoteWithWhisper,
+  startLiveSpeechRecognition,
+  readOutLoud,
+  stopReadingOutLoud,
+} from '@/lib/whisperService';
 
 // Dynamically import Leaflet map (no SSR)
 const HeritageMap = dynamic(() => import('@/components/HeritageMap'), { ssr: false });
@@ -263,13 +269,17 @@ export default function HeritageWatchPage() {
   const [triageLoading, setTriageLoading] = useState(false);
   const [triageResult, setTriageResult] = useState<any>(null);
 
-  // Voice recording
+  // Voice recording & Whisper Neural Transcriber
   const [isRecording, setIsRecording] = useState(false);
   const [voiceBlob, setVoiceBlob] = useState<Blob | null>(null);
   const [voiceDuration, setVoiceDuration] = useState(0);
+  const [whisperTranscribing, setWhisperTranscribing] = useState(false);
+  const [whisperTranscript, setWhisperTranscript] = useState('');
+  const [activeSpeakingIssueId, setActiveSpeakingIssueId] = useState<string | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const recordingChunksRef = useRef<Blob[]>([]);
   const voiceTimerRef = useRef<any>(null);
+  const liveRecognitionRef = useRef<{ stop: () => void } | null>(null);
 
   // Adopt Modal
   const [showAdoptModal, setShowAdoptModal] = useState(false);
@@ -501,19 +511,52 @@ export default function HeritageWatchPage() {
   };
 
   // ---------------------
-  // Voice Recording
+  // Voice Recording & Whisper Transcription
   // ---------------------
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const recorder = new MediaRecorder(stream);
       recordingChunksRef.current = [];
+      setWhisperTranscript('');
+
+      // Start live speech recognition (Whisper / Neural engine)
+      liveRecognitionRef.current = startLiveSpeechRecognition((transcript) => {
+        setWhisperTranscript(transcript);
+        if (!reportDescription) {
+          setReportDescription(transcript);
+        }
+      });
 
       recorder.ondataavailable = (e) => { if (e.data.size > 0) recordingChunksRef.current.push(e.data); };
-      recorder.onstop = () => {
+      recorder.onstop = async () => {
         const blob = new Blob(recordingChunksRef.current, { type: 'audio/webm' });
         setVoiceBlob(blob);
         stream.getTracks().forEach(t => t.stop());
+
+        // Stop live recognition
+        if (liveRecognitionRef.current) {
+          liveRecognitionRef.current.stop();
+          liveRecognitionRef.current = null;
+        }
+
+        // Transcribe voice note with Whisper
+        setWhisperTranscribing(true);
+        try {
+          const result = await transcribeVoiceNoteWithWhisper(blob, whisperTranscript || reportDescription);
+          if (result.text) {
+            setWhisperTranscript(result.text);
+            if (!reportDescription) {
+              setReportDescription(result.text);
+            }
+            if (!reportTitle) {
+              setReportTitle(`Civic Voice Note: ${result.text.slice(0, 45)}...`);
+            }
+          }
+        } finally {
+          setWhisperTranscribing(false);
+        }
+
         // Automatically trigger AI triage when voice note is recorded (Prompt 2.2)
         triggerTriage(reportFile, blob);
       };
@@ -528,6 +571,10 @@ export default function HeritageWatchPage() {
 
   const stopRecording = () => {
     if (mediaRecorderRef.current) mediaRecorderRef.current.stop();
+    if (liveRecognitionRef.current) {
+      liveRecognitionRef.current.stop();
+      liveRecognitionRef.current = null;
+    }
     setIsRecording(false);
     clearInterval(voiceTimerRef.current);
   };
@@ -1039,7 +1086,37 @@ export default function HeritageWatchPage() {
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="flex items-center gap-2 pt-1.5">
+                        <div className="flex flex-wrap items-center gap-2 pt-1.5">
+                          {/* Read Out Loud Voice Dispatch & Summary */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const textToSpeak = `${issue.title}. Category: ${issue.category}. Assigned jurisdiction: ${issue.jurisdiction}. ${issue.description || ''}`;
+                              if (activeSpeakingIssueId === issue.id) {
+                                stopReadingOutLoud();
+                                setActiveSpeakingIssueId(null);
+                              } else {
+                                readOutLoud(textToSpeak, {
+                                  lang: 'en-IN',
+                                  onStart: () => setActiveSpeakingIssueId(issue.id),
+                                  onEnd: () => setActiveSpeakingIssueId(null),
+                                  onError: () => setActiveSpeakingIssueId(null),
+                                });
+                              }
+                            }}
+                            className={`py-1.5 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-2xs ${
+                              activeSpeakingIssueId === issue.id
+                                ? 'bg-[#9a452c] text-white animate-pulse'
+                                : 'bg-[#f5f3f0] hover:bg-[#eae8e5] text-[#1b1c1a] border border-[#bcc9c6]/40'
+                            }`}
+                            title="Read out loud this civic report and voice dispatch"
+                          >
+                            <span className="material-symbols-outlined text-[16px]">
+                              {activeSpeakingIssueId === issue.id ? 'graphic_eq' : 'volume_up'}
+                            </span>
+                            <span>{activeSpeakingIssueId === issue.id ? 'Speaking...' : 'Read Out Loud'}</span>
+                          </button>
+
                           {/* Upvote Button (Confirm Issue with trigger & disabled check) */}
                           <button
                             type="button"
@@ -1190,13 +1267,13 @@ export default function HeritageWatchPage() {
                   <p className="text-[10px] text-[#6d7a77] mt-0.5">GeoTIFF, JPEG, PNG, or RAW (Max 25MB)</p>
                 </div>
 
-                {/* Voice Note Recorder */}
+                {/* Voice Note Recorder (Whisper Neural STT & Read Out Loud) */}
                 <div className="border border-[#eae8e5] bg-white rounded-[8px] p-4 flex flex-col justify-between shadow-xs">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       {isRecording && <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></div>}
                       <span className="text-xs font-bold text-[#1b1c1a] uppercase tracking-wider">
-                        {voiceBlob ? 'Voice Dispatch Recorded' : isRecording ? 'Recording...' : 'Voice Dispatch'}
+                        {voiceBlob ? 'Voice Dispatch Recorded' : isRecording ? 'Whisper Listening...' : 'Voice Dispatch'}
                       </span>
                     </div>
                     {(isRecording || voiceBlob) && (
@@ -1204,26 +1281,79 @@ export default function HeritageWatchPage() {
                     )}
                   </div>
 
-                  <div className="mt-4 flex items-center gap-3">
+                  <div className="mt-3 flex flex-col gap-2.5">
                     {!isRecording && !voiceBlob && (
                       <button type="button" onClick={startRecording}
-                        className="w-full py-3 rounded-[8px] bg-[#1b1c1a] text-white text-xs font-semibold hover:bg-[#9a452c] transition flex items-center justify-center gap-2">
+                        className="w-full py-3 rounded-[8px] bg-[#1b1c1a] text-white text-xs font-semibold hover:bg-[#9a452c] transition flex items-center justify-center gap-2 shadow-xs">
                         <span className="material-symbols-outlined text-[18px]">mic</span>
-                        Start Recording Voice Note
+                        Record Voice Note (Whisper AI)
                       </button>
                     )}
                     {isRecording && (
-                      <button type="button" onClick={stopRecording}
-                        className="w-full py-3 rounded-[8px] bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition flex items-center justify-center gap-2 animate-pulse">
-                        <span className="material-symbols-outlined text-[18px]">stop</span>
-                        Stop Recording
-                      </button>
+                      <div className="space-y-2">
+                        <button type="button" onClick={stopRecording}
+                          className="w-full py-3 rounded-[8px] bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition flex items-center justify-center gap-2 animate-pulse">
+                          <span className="material-symbols-outlined text-[18px]">stop</span>
+                          Stop & Transcribe with Whisper
+                        </button>
+                        {whisperTranscript && (
+                          <p className="text-[11px] text-[#3d4947] italic truncate">
+                            Listening: &ldquo;{whisperTranscript}&rdquo;
+                          </p>
+                        )}
+                      </div>
                     )}
                     {voiceBlob && !isRecording && (
-                      <div className="w-full flex items-center gap-2">
-                        <audio src={URL.createObjectURL(voiceBlob)} controls className="flex-1 h-8" />
-                        <button type="button" onClick={() => { setVoiceBlob(null); setVoiceDuration(0); }}
-                          className="text-[11px] text-[#9a452c] hover:underline font-medium">Re-record</button>
+                      <div className="w-full flex flex-col gap-2">
+                        <div className="flex items-center gap-2">
+                          <audio src={URL.createObjectURL(voiceBlob)} controls className="flex-1 h-8" />
+                          <button
+                            type="button"
+                            onClick={() =>
+                              readOutLoud(
+                                whisperTranscript || reportDescription || 'Voice dispatch recorded for Bagalkote civic ledger.',
+                                {
+                                  lang: 'en-IN',
+                                  onStart: () => setActiveSpeakingIssueId('modal-voicenote'),
+                                  onEnd: () => setActiveSpeakingIssueId(null),
+                                }
+                              )
+                            }
+                            className="px-3 py-1.5 rounded-[6px] bg-[#00685f] hover:bg-[#005049] text-white text-[11px] font-bold flex items-center gap-1 shadow-xs transition-all shrink-0"
+                            title="Read Out Loud using Speech Engine"
+                          >
+                            <span className="material-symbols-outlined text-[15px]">
+                              {activeSpeakingIssueId === 'modal-voicenote' ? 'graphic_eq' : 'volume_up'}
+                            </span>
+                            <span>{activeSpeakingIssueId === 'modal-voicenote' ? 'Speaking...' : 'Read Out Loud'}</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setVoiceBlob(null);
+                              setVoiceDuration(0);
+                              setWhisperTranscript('');
+                              stopReadingOutLoud();
+                            }}
+                            className="text-[11px] text-[#9a452c] hover:underline font-medium shrink-0"
+                          >
+                            Re-record
+                          </button>
+                        </div>
+
+                        {/* Whisper Transcription Card */}
+                        <div className="p-2.5 rounded-[6px] bg-[#f5f3f0] border border-[#eae8e5] text-xs">
+                          <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-[#00685f] mb-1">
+                            <span className="flex items-center gap-1">
+                              <span className="material-symbols-outlined text-[13px]">graphic_eq</span>
+                              Whisper Neural Transcription
+                            </span>
+                            {whisperTranscribing && <span className="animate-pulse text-[#9a452c]">Transcribing...</span>}
+                          </div>
+                          <p className="text-[#1b1c1a] italic leading-snug">
+                            &ldquo;{whisperTranscript || reportDescription || 'Analyzing voice acoustics...'}&rdquo;
+                          </p>
+                        </div>
                       </div>
                     )}
                   </div>

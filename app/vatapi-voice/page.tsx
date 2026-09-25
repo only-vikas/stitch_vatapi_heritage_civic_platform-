@@ -14,6 +14,12 @@ import {
   TOURIST_PROMPT_SUGGESTIONS,
   BADAMI_CAVE3_INSCRIPTION,
 } from '@/lib/translations';
+import {
+  transcribeVoiceNoteWithWhisper,
+  startLiveSpeechRecognition,
+  readOutLoud,
+  stopReadingOutLoud,
+} from '@/lib/whisperService';
 
 export default function VatapiVoicePage() {
   // Navigation & Modals
@@ -68,6 +74,14 @@ export default function VatapiVoicePage() {
   // TTS State
   const [activeAudioPlayingId, setActiveAudioPlayingId] = useState<string | null>(null);
 
+  // Whisper Voice Note Recording State
+  const [isRecordingVoiceNote, setIsRecordingVoiceNote] = useState(false);
+  const [whisperTranscribing, setWhisperTranscribing] = useState(false);
+  const [whisperLiveTranscript, setWhisperLiveTranscript] = useState('');
+  const voiceNoteMediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const voiceNoteChunksRef = useRef<Blob[]>([]);
+  const voiceNoteLiveRecognitionRef = useRef<{ stop: () => void } | null>(null);
+
   // Inscription Scanner State (Prompt 4.2.2)
   const [isScanningInscription, setIsScanningInscription] = useState(false);
   const [inscriptionData, setInscriptionData] = useState<InscriptionData | null>(null);
@@ -82,49 +96,112 @@ export default function VatapiVoicePage() {
   }, [messages, activeMode]);
 
   // ----------------------------------------------------------------------
-  // 1. Text-to-Speech (TTS) using Browser Web Speech API
+  // 1. Text-to-Speech (TTS) using Whisper / Web Speech API (Read Out Loud)
   // ----------------------------------------------------------------------
   const handlePlayAudio = (text: string, id: string, lang = 'kn-IN') => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
-      setToastMessage('Text-to-Speech is not supported in this browser.');
-      setToastType('error');
-      setToastVisible(true);
+    if (activeAudioPlayingId === id) {
+      stopReadingOutLoud();
+      setActiveAudioPlayingId(null);
       return;
     }
 
-    window.speechSynthesis.cancel(); // Stop any currently playing audio
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = lang;
-    utterance.rate = 0.9;
-    utterance.pitch = 1.0;
-
-    // Check for Kannada voice if available, else standard fallback
-    const voices = window.speechSynthesis.getVoices();
-    const knVoice = voices.find((v) => v.lang.includes('kn') || v.name.includes('Kannada'));
-    if (knVoice && lang.startsWith('kn')) {
-      utterance.voice = knVoice;
-    }
-
-    utterance.onstart = () => {
-      setActiveAudioPlayingId(id);
-    };
-
-    utterance.onend = () => {
-      setActiveAudioPlayingId(null);
-    };
-
-    utterance.onerror = () => {
-      setActiveAudioPlayingId(null);
-    };
-
-    window.speechSynthesis.speak(utterance);
+    readOutLoud(text, {
+      lang,
+      rate: 0.9,
+      onStart: () => setActiveAudioPlayingId(id),
+      onEnd: () => setActiveAudioPlayingId(null),
+      onError: () => setActiveAudioPlayingId(null),
+    });
   };
 
   // ----------------------------------------------------------------------
-  // 2. Submit Translation (Tourist or Vendor Mode)
+  // 2. Whisper Neural Voice Note Recorder
   // ----------------------------------------------------------------------
-  const handleSendTranslation = async (textToSend?: string) => {
+  const startVoiceNoteRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      voiceNoteChunksRef.current = [];
+      setWhisperLiveTranscript('');
+      setIsRecordingVoiceNote(true);
+
+      // Start live speech recognition (Whisper / Neural engine)
+      voiceNoteLiveRecognitionRef.current = startLiveSpeechRecognition(
+        (transcript) => {
+          setWhisperLiveTranscript(transcript);
+          if (activeMode === 'tourist') {
+            setInputText(transcript);
+          } else {
+            setCustomVendorInput(transcript);
+          }
+        },
+        activeMode === 'tourist' ? 'en-IN' : 'kn-IN'
+      );
+
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) voiceNoteChunksRef.current.push(e.data);
+      };
+
+      recorder.onstop = async () => {
+        const blob = new Blob(voiceNoteChunksRef.current, { type: 'audio/webm' });
+        stream.getTracks().forEach((t) => t.stop());
+
+        if (voiceNoteLiveRecognitionRef.current) {
+          voiceNoteLiveRecognitionRef.current.stop();
+          voiceNoteLiveRecognitionRef.current = null;
+        }
+
+        setWhisperTranscribing(true);
+        try {
+          const currentHint =
+            whisperLiveTranscript ||
+            (activeMode === 'tourist' ? inputText : customVendorInput);
+          const result = await transcribeVoiceNoteWithWhisper(
+            blob,
+            currentHint,
+            activeMode === 'tourist' ? 'en-IN' : 'kn-IN'
+          );
+
+          const queryText = result.text || whisperLiveTranscript || currentHint;
+          if (queryText) {
+            if (activeMode === 'tourist') {
+              setInputText(queryText);
+            } else {
+              setCustomVendorInput(queryText);
+            }
+            // Submit translation and automatically read out loud
+            handleSendTranslation(queryText, true);
+          }
+        } finally {
+          setWhisperTranscribing(false);
+          setIsRecordingVoiceNote(false);
+        }
+      };
+
+      recorder.start();
+      voiceNoteMediaRecorderRef.current = recorder;
+    } catch {
+      setIsRecordingVoiceNote(false);
+      setToastMessage('Microphone access is required to record voice notes.');
+      setToastType('error');
+      setToastVisible(true);
+    }
+  };
+
+  const stopVoiceNoteRecording = () => {
+    if (voiceNoteMediaRecorderRef.current) {
+      voiceNoteMediaRecorderRef.current.stop();
+    }
+    if (voiceNoteLiveRecognitionRef.current) {
+      voiceNoteLiveRecognitionRef.current.stop();
+      voiceNoteLiveRecognitionRef.current = null;
+    }
+  };
+
+  // ----------------------------------------------------------------------
+  // 3. Submit Translation (Tourist or Vendor Mode) & Read Out Loud
+  // ----------------------------------------------------------------------
+  const handleSendTranslation = async (textToSend?: string, autoSpeak = true) => {
     const query = (textToSend || (activeMode === 'tourist' ? inputText : customVendorInput)).trim();
     if (!query) return;
 
@@ -150,8 +227,9 @@ export default function VatapiVoicePage() {
 
       if (data.success) {
         if (activeMode === 'tourist') {
+          const msgId = `vm-${Date.now()}`;
           const newMessage: VoiceMessage = {
-            id: `vm-${Date.now()}`,
+            id: msgId,
             sender: 'user',
             mode: 'tourist',
             originalText: query,
@@ -163,10 +241,19 @@ export default function VatapiVoicePage() {
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           };
           setMessages((prev) => [...prev, newMessage]);
+
+          // Read out loud the Kannada translation automatically
+          if (autoSpeak) {
+            const spokenText = data.audioText || data.kannadaScript || data.translatedText;
+            setTimeout(() => {
+              handlePlayAudio(spokenText, msgId, 'kn-IN');
+            }, 300);
+          }
         } else {
-          // Vendor mode: update large broadcast card
+          // Vendor mode: update large broadcast card and read out loud in English
+          const vendorId = `vp-custom-${Date.now()}`;
           setSelectedVendorPhrase({
-            id: `vp-custom-${Date.now()}`,
+            id: vendorId,
             kannada: data.kannadaScript || query,
             transliteration: data.transliteration || '',
             english: data.translatedText || query,
@@ -175,6 +262,12 @@ export default function VatapiVoicePage() {
           setToastMessage('Vendor card updated! Ready to show tourist.');
           setToastType('success');
           setToastVisible(true);
+
+          if (autoSpeak) {
+            setTimeout(() => {
+              handlePlayAudio(data.translatedText || query, vendorId, 'en-IN');
+            }, 300);
+          }
         }
       }
     } catch (err) {
@@ -341,20 +434,21 @@ export default function VatapiVoicePage() {
                             {msg.kannadaScript}
                           </div>
 
-                          {/* Speaker Button (Web Speech API) */}
+                          {/* Read Out Loud Button */}
                           <button
                             type="button"
                             onClick={() => handlePlayAudio(msg.audioText, msg.id, 'kn-IN')}
-                            title="Listen to Kannada pronunciation"
-                            className={`p-2 rounded-xl transition-all shrink-0 ${
+                            title="Read Out Loud using Speech Engine"
+                            className={`px-3 py-1.5 rounded-xl transition-all shrink-0 flex items-center gap-1.5 text-xs font-bold shadow-2xs ${
                               activeAudioPlayingId === msg.id
                                 ? 'bg-[#00685f] text-white animate-pulse'
                                 : 'bg-[#efeeeb] hover:bg-[#eae8e5] text-[#00685f]'
                             }`}
                           >
-                            <span className="material-symbols-outlined text-[19px]">
+                            <span className="material-symbols-outlined text-[17px]">
                               {activeAudioPlayingId === msg.id ? 'graphic_eq' : 'volume_up'}
                             </span>
+                            <span>{activeAudioPlayingId === msg.id ? 'Speaking...' : 'Read Out Loud'}</span>
                           </button>
                         </div>
 
@@ -408,10 +502,35 @@ export default function VatapiVoicePage() {
                     className="flex-1 bg-white border border-[#eae8e5] focus:border-[#00685f] rounded-xl px-4 py-2.5 text-xs sm:text-sm text-[#1b1c1a] focus:outline-none placeholder-[#6d7a77]"
                   />
 
+                  {/* Record Voice Note with Whisper */}
+                  <button
+                    type="button"
+                    onClick={isRecordingVoiceNote ? stopVoiceNoteRecording : startVoiceNoteRecording}
+                    title={isRecordingVoiceNote ? 'Stop Voice Note' : 'Record Voice Note with Whisper STT'}
+                    className={`px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all shadow-xs flex items-center gap-1.5 shrink-0 ${
+                      isRecordingVoiceNote
+                        ? 'bg-red-600 text-white animate-pulse ring-2 ring-red-400'
+                        : whisperTranscribing
+                        ? 'bg-amber-500 text-white animate-pulse'
+                        : 'bg-[#efeeeb] hover:bg-[#eae8e5] text-[#1b1c1a] border border-[#bcc9c6]/40'
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-[17px]">
+                      {isRecordingVoiceNote ? 'stop' : 'mic'}
+                    </span>
+                    <span>
+                      {isRecordingVoiceNote
+                        ? 'Listening...'
+                        : whisperTranscribing
+                        ? 'Transcribing...'
+                        : 'Voice Note'}
+                    </span>
+                  </button>
+
                   <button
                     type="submit"
                     disabled={isTranslating || !inputText.trim()}
-                    className="px-4 py-2.5 rounded-xl bg-[#00685f] hover:bg-[#005049] disabled:bg-[#bcc9c6] text-white font-semibold text-xs transition-all shadow-xs flex items-center gap-1.5"
+                    className="px-4 py-2.5 rounded-xl bg-[#00685f] hover:bg-[#005049] disabled:bg-[#bcc9c6] text-white font-semibold text-xs transition-all shadow-xs flex items-center gap-1.5 shrink-0"
                   >
                     <span>Translate</span>
                     <span className="material-symbols-outlined text-[16px]">send</span>
@@ -592,7 +711,7 @@ export default function VatapiVoicePage() {
             {/* Custom Kannada Driver Input Bar */}
             <div className="bg-white rounded-3xl border border-[#eae8e5] p-5 shadow-xs">
               <h4 className="text-xs font-bold text-[#1b1c1a] uppercase tracking-wider mb-2">
-                Custom Driver Input (Type in Kannada or English)
+                Custom Driver Input (Type or Record Voice Note with Whisper)
               </h4>
               <form
                 onSubmit={(e) => {
@@ -608,6 +727,31 @@ export default function VatapiVoicePage() {
                   placeholder="ಉದಾಹರಣೆಗೆ: ಇನ್ನೊಂದು 10 ನಿಮಿಷದಲ್ಲಿ ಹೊರಡುತ್ತೇವೆ (Departing in 10 mins)..."
                   className="flex-1 bg-[#fbf9f6] border border-[#eae8e5] focus:border-[#9a452c] rounded-xl px-4 py-3 text-xs sm:text-sm text-[#1b1c1a] focus:outline-none"
                 />
+
+                {/* Record Voice Note with Whisper (Kannada / English) */}
+                <button
+                  type="button"
+                  onClick={isRecordingVoiceNote ? stopVoiceNoteRecording : startVoiceNoteRecording}
+                  title={isRecordingVoiceNote ? 'Stop Voice Note' : 'Record Voice Note with Whisper STT'}
+                  className={`px-3.5 py-3 rounded-xl font-bold text-xs transition-all shadow-xs flex items-center gap-1.5 shrink-0 ${
+                    isRecordingVoiceNote
+                      ? 'bg-red-600 text-white animate-pulse ring-2 ring-red-400'
+                      : whisperTranscribing
+                      ? 'bg-amber-500 text-white animate-pulse'
+                      : 'bg-[#efeeeb] hover:bg-[#eae8e5] text-[#1b1c1a] border border-[#bcc9c6]/40'
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-[17px]">
+                    {isRecordingVoiceNote ? 'stop' : 'mic'}
+                  </span>
+                  <span>
+                    {isRecordingVoiceNote
+                      ? 'Listening...'
+                      : whisperTranscribing
+                      ? 'Transcribing...'
+                      : 'Voice Note'}
+                  </span>
+                </button>
 
                 <button
                   type="submit"

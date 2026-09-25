@@ -1,8 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/context/AuthContext';
+import {
+  transcribeVoiceNoteWithWhisper,
+  startLiveSpeechRecognition,
+  readOutLoud,
+  stopReadingOutLoud,
+} from '@/lib/whisperService';
 
 interface ReportIssueModalProps {
   isOpen: boolean;
@@ -24,13 +30,99 @@ export default function ReportIssueModal({ isOpen, onClose, onIssueReported, ini
   const [success, setSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  // Whisper Voice Note States
+  const [voiceBlob, setVoiceBlob] = useState<Blob | null>(null);
+  const [isRecordingVoice, setIsRecordingVoice] = useState(false);
+  const [whisperTranscript, setWhisperTranscript] = useState('');
+  const [whisperTranscribing, setWhisperTranscribing] = useState(false);
+  const [isSpeakingVoice, setIsSpeakingVoice] = useState(false);
+
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const liveRecognitionRef = useRef<{ stop: () => void } | null>(null);
+
   React.useEffect(() => {
     if (initialCategory) {
       setCategory(initialCategory);
     }
   }, [initialCategory, isOpen]);
 
-  if (!isOpen) return null;
+  // Voice Note Recording with Whisper
+  const startVoiceRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      audioChunksRef.current = [];
+      setWhisperTranscript('');
+      setIsRecordingVoice(true);
+
+      // Start live speech recognition
+      liveRecognitionRef.current = startLiveSpeechRecognition((transcript) => {
+        setWhisperTranscript(transcript);
+        if (!description) setDescription(transcript);
+        if (!title) setTitle(`Civic Report: ${transcript.slice(0, 40)}...`);
+      }, 'en-IN');
+
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) audioChunksRef.current.push(e.data);
+      };
+
+      recorder.onstop = async () => {
+        const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        setVoiceBlob(blob);
+        stream.getTracks().forEach((t) => t.stop());
+
+        if (liveRecognitionRef.current) {
+          liveRecognitionRef.current.stop();
+          liveRecognitionRef.current = null;
+        }
+
+        setWhisperTranscribing(true);
+        try {
+          const result = await transcribeVoiceNoteWithWhisper(
+            blob,
+            whisperTranscript || description || 'Observed defect near heritage corridor.',
+            'en-IN'
+          );
+          if (result.text) {
+            setWhisperTranscript(result.text);
+            if (!description || description.length < 10) {
+              setDescription(result.text);
+            }
+            if (!title) {
+              setTitle(`Civic Report: ${result.text.slice(0, 45)}...`);
+            }
+          }
+        } finally {
+          setWhisperTranscribing(false);
+          setIsRecordingVoice(false);
+        }
+      };
+
+      recorder.start();
+      mediaRecorderRef.current = recorder;
+    } catch (err) {
+      console.warn('Microphone error:', err);
+      setIsRecordingVoice(false);
+      setErrorMsg('Microphone access denied or unavailable.');
+    }
+  };
+
+  const stopVoiceRecording = () => {
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.stop();
+    }
+    if (liveRecognitionRef.current) {
+      liveRecognitionRef.current.stop();
+      liveRecognitionRef.current = null;
+    }
+  };
+
+  const handleClose = () => {
+    stopReadingOutLoud();
+    setIsSpeakingVoice(false);
+    onClose();
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,6 +184,8 @@ export default function ReportIssueModal({ isOpen, onClose, onIssueReported, ini
     }
   };
 
+  if (!isOpen) return null;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
       <div className="relative w-full max-w-lg bg-[#fbf9f6] rounded-2xl shadow-2xl border border-[#eae8e5] p-6 overflow-hidden max-h-[90vh] flex flex-col">
@@ -108,7 +202,7 @@ export default function ReportIssueModal({ isOpen, onClose, onIssueReported, ini
           </div>
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleClose}
             className="p-1.5 rounded-lg text-[#6d7a77] hover:text-[#1b1c1a] hover:bg-[#efeeeb] transition-colors"
           >
             <span className="material-symbols-outlined text-[20px]">close</span>
@@ -220,24 +314,120 @@ export default function ReportIssueModal({ isOpen, onClose, onIssueReported, ini
                 ></textarea>
               </div>
 
-              {/* Evidence Upload */}
-              <div>
-                <label className="block text-xs font-semibold text-[#3d4947] uppercase tracking-wider mb-1">
-                  Attach Photographic Evidence (Supabase Storage: &apos;evidence&apos; bucket)
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setFile(e.target.files?.[0] || null)}
-                  className="w-full text-xs text-[#6d7a77] file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#00685f]/10 file:text-[#00685f] hover:file:bg-[#00685f]/20 cursor-pointer"
-                />
+              {/* Evidence: Whisper Voice Note & Photo Upload */}
+              <div className="space-y-3">
+                {/* Voice Note Recorder with Whisper AI & Read Out Loud */}
+                <div className="p-3.5 rounded-xl border border-[#eae8e5] bg-white space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-[#3d4947] uppercase tracking-wider flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-[16px] text-[#00685f]">mic</span>
+                      Record Voice Note (Whisper AI)
+                    </span>
+                    {isRecordingVoice && (
+                      <span className="text-[10px] font-bold text-red-600 animate-pulse flex items-center gap-1">
+                        <span className="w-2 h-2 rounded-full bg-red-600"></span> Recording Voice Note
+                      </span>
+                    )}
+                  </div>
+
+                  {!voiceBlob && (
+                    <button
+                      type="button"
+                      onClick={isRecordingVoice ? stopVoiceRecording : startVoiceRecording}
+                      className={`w-full py-2.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                        isRecordingVoice
+                          ? 'bg-red-600 text-white animate-pulse'
+                          : 'bg-[#00685f]/10 text-[#00685f] hover:bg-[#00685f]/20 border border-[#00685f]/30'
+                      }`}
+                    >
+                      <span className="material-symbols-outlined text-[18px]">
+                        {isRecordingVoice ? 'stop' : 'mic'}
+                      </span>
+                      <span>
+                        {isRecordingVoice ? 'Stop Recording Voice Note' : 'Record Voice Note with Whisper STT'}
+                      </span>
+                    </button>
+                  )}
+
+                  {voiceBlob && (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <audio src={URL.createObjectURL(voiceBlob)} controls className="flex-1 h-8" />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (isSpeakingVoice) {
+                              stopReadingOutLoud();
+                              setIsSpeakingVoice(false);
+                            } else {
+                              readOutLoud(whisperTranscript || title || description || 'Civic voice dispatch recorded.', {
+                                lang: 'en-IN',
+                                onStart: () => setIsSpeakingVoice(true),
+                                onEnd: () => setIsSpeakingVoice(false),
+                                onError: () => setIsSpeakingVoice(false),
+                              });
+                            }
+                          }}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all ${
+                            isSpeakingVoice ? 'bg-[#9a452c] text-white animate-pulse' : 'bg-[#00685f] hover:bg-[#005049] text-white'
+                          }`}
+                          title="Read Out Loud using Speech Engine"
+                        >
+                          <span className="material-symbols-outlined text-[15px]">
+                            {isSpeakingVoice ? 'graphic_eq' : 'volume_up'}
+                          </span>
+                          <span>{isSpeakingVoice ? 'Speaking...' : 'Read Out Loud'}</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setVoiceBlob(null);
+                            setWhisperTranscript('');
+                            stopReadingOutLoud();
+                            setIsSpeakingVoice(false);
+                          }}
+                          className="text-[11px] text-[#9a452c] hover:underline font-medium shrink-0"
+                        >
+                          Reset
+                        </button>
+                      </div>
+
+                      {/* Whisper Transcription Card */}
+                      <div className="p-2.5 rounded-lg bg-[#fbf9f6] border border-[#eae8e5] text-xs">
+                        <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-[#00685f] mb-1">
+                          <span className="flex items-center gap-1">
+                            <span className="material-symbols-outlined text-[13px]">graphic_eq</span>
+                            Whisper Neural Transcription
+                          </span>
+                          {whisperTranscribing && <span className="animate-pulse text-[#9a452c]">Transcribing...</span>}
+                        </div>
+                        <p className="text-[#1b1c1a] italic leading-snug">
+                          &ldquo;{whisperTranscript || 'Analyzing voice acoustics...'}&rdquo;
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Photo Upload */}
+                <div>
+                  <label className="block text-xs font-semibold text-[#3d4947] uppercase tracking-wider mb-1">
+                    Attach Photographic Evidence (Supabase Storage: &apos;evidence&apos; bucket)
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setFile(e.target.files?.[0] || null)}
+                    className="w-full text-xs text-[#6d7a77] file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#00685f]/10 file:text-[#00685f] hover:file:bg-[#00685f]/20 cursor-pointer"
+                  />
+                </div>
               </div>
 
               {/* Action buttons */}
               <div className="pt-2 flex justify-end gap-2">
                 <button
                   type="button"
-                  onClick={onClose}
+                  onClick={handleClose}
                   className="px-4 py-2.5 rounded-xl border border-[#eae8e5] text-sm text-[#3d4947] hover:bg-[#efeeeb] transition-colors"
                 >
                   Cancel
