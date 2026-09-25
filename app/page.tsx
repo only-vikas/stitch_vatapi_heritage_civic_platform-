@@ -265,7 +265,7 @@ export default function StartingPage() {
         <video
           ref={videoRef}
           className="absolute inset-0 w-full h-full object-cover"
-          src="/video/boats_agastya_lake.mp4"
+          src="/video/Badami_home_video.mp4"
           autoPlay
           loop
           muted
