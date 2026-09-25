@@ -1159,8 +1159,17 @@ export default function HeritageWatchPage() {
           <nav className="hidden lg:flex items-center gap-1 bg-[#efeeeb]/70 p-1 rounded-xl">
             <Link href="/" className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-[#3d4947] hover:text-[#1b1c1a]">Home</Link>
             <span className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-[#00685f] shadow-xs">Heritage Watch</span>
+            <Link href="/ghost-guide" className="px-3.5 py-1.5 rounded-lg text-xs font-bold text-[#9a452c] hover:bg-amber-100/60 flex items-center gap-1">
+              <span className="material-symbols-outlined text-[15px]">crown</span>
+              Ghost Guide
+            </Link>
+            <Link href="/oracle" className="px-3.5 py-1.5 rounded-lg text-xs font-bold text-[#00685f] hover:bg-teal-100/60 flex items-center gap-1">
+              <span className="material-symbols-outlined text-[15px]">online_prediction</span>
+              Oracle AI
+            </Link>
             <Link href="/ooru-oota" className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-[#3d4947] hover:text-[#1b1c1a]">Ooru Oota</Link>
-            <Link href="/#weavers" className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-[#3d4947] hover:text-[#1b1c1a]">Artisan Weavers</Link>
+            <Link href="/circuit-planner" className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-[#3d4947] hover:text-[#1b1c1a]">Circuit Planner</Link>
+            <Link href="/weavers" className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-[#3d4947] hover:text-[#1b1c1a]">Artisan Weavers</Link>
             <Link href="/heritage-health-check" className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-[#3d4947] hover:text-[#1b1c1a]">AR Scanner</Link>
           </nav>
 

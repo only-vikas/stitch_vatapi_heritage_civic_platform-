@@ -5,21 +5,26 @@ import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 
 interface NavbarProps {
-  onOpenReportModal: () => void;
-  onOpenChatModal: () => void;
+  onOpenReportModal?: () => void;
+  onOpenChatModal?: () => void;
   activeSection?: string;
 }
 
-export default function Navbar({ onOpenReportModal, onOpenChatModal, activeSection = 'home' }: NavbarProps) {
+export default function Navbar({
+  onOpenReportModal = () => {},
+  onOpenChatModal = () => {},
+  activeSection = 'home',
+}: NavbarProps) {
   const { user, profile, activePersona, signOut } = useAuth();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 bg-[#fbf9f6]/90 backdrop-blur-md border-b border-[#eae8e5] shadow-xs">
-      <div className="h-20 max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between gap-4">
+    <header className="fixed top-0 left-0 right-0 z-40 bg-[#fbf9f6]/95 backdrop-blur-md border-b border-[#eae8e5] shadow-xs">
+      <div className="h-20 max-w-[1440px] mx-auto px-4 lg:px-8 flex items-center justify-between gap-3">
         {/* Brand */}
-        <div className="flex items-center gap-4 shrink-0">
-          <Link href="/home" className="flex items-center gap-3 group">
+        <div className="flex items-center gap-3 shrink-0">
+          <Link href="/home" className="flex items-center gap-2.5 group">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#9a452c] to-[#00685f] flex items-center justify-center text-white font-serif font-bold text-xl shadow-sm transition-transform group-hover:scale-105">
               V
             </div>
@@ -27,18 +32,18 @@ export default function Navbar({ onOpenReportModal, onOpenChatModal, activeSecti
               <span className="vatapi-nav-logo font-serif text-2xl font-bold text-[#9a452c] tracking-tight leading-none">
                 Vatapi
               </span>
-              <span className="text-[11px] text-[#6d7a77] uppercase tracking-wider font-semibold mt-0.5">
+              <span className="text-[10px] text-[#6d7a77] uppercase tracking-wider font-semibold mt-0.5">
                 Bagalkote Heritage AI
               </span>
             </div>
           </Link>
         </div>
 
-        {/* Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-1 bg-[#efeeeb]/70 p-1 rounded-xl">
+        {/* Navigation Links (Desktop: Scrollable or flex fit) */}
+        <nav className="hidden xl:flex items-center gap-1 bg-[#efeeeb]/80 p-1 rounded-xl overflow-x-auto no-scrollbar max-w-[860px]">
           <Link
             href="/home"
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide whitespace-nowrap transition-all ${
               activeSection === 'home'
                 ? 'bg-white text-[#00685f] shadow-xs'
                 : 'text-[#3d4947] hover:text-[#1b1c1a]'
@@ -48,7 +53,7 @@ export default function Navbar({ onOpenReportModal, onOpenChatModal, activeSecti
           </Link>
           <Link
             href="/heritage-watch"
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide whitespace-nowrap transition-all ${
               activeSection === 'heritage-watch'
                 ? 'bg-white text-[#00685f] shadow-xs'
                 : 'text-[#3d4947] hover:text-[#1b1c1a]'
@@ -57,8 +62,30 @@ export default function Navbar({ onOpenReportModal, onOpenChatModal, activeSecti
             Heritage Watch
           </Link>
           <Link
+            href="/ghost-guide"
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide whitespace-nowrap transition-all flex items-center gap-1 ${
+              activeSection === 'ghost-guide'
+                ? 'bg-[#9a452c] text-white shadow-xs'
+                : 'text-[#9a452c] hover:bg-amber-100/60 font-bold'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[15px]">crown</span>
+            Ghost Guide
+          </Link>
+          <Link
+            href="/oracle"
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide whitespace-nowrap transition-all flex items-center gap-1 ${
+              activeSection === 'oracle'
+                ? 'bg-[#00685f] text-white shadow-xs'
+                : 'text-[#00685f] hover:bg-teal-100/60 font-bold'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[15px]">online_prediction</span>
+            Oracle AI
+          </Link>
+          <Link
             href="/ooru-oota"
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide whitespace-nowrap transition-all ${
               activeSection === 'ooru-oota'
                 ? 'bg-white text-[#00685f] shadow-xs'
                 : 'text-[#3d4947] hover:text-[#1b1c1a]'
@@ -68,7 +95,7 @@ export default function Navbar({ onOpenReportModal, onOpenChatModal, activeSecti
           </Link>
           <Link
             href="/circuit-planner"
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide whitespace-nowrap transition-all ${
               activeSection === 'circuit-planner'
                 ? 'bg-white text-[#00685f] shadow-xs'
                 : 'text-[#3d4947] hover:text-[#1b1c1a]'
@@ -78,7 +105,7 @@ export default function Navbar({ onOpenReportModal, onOpenChatModal, activeSecti
           </Link>
           <Link
             href="/vatapi-voice"
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide whitespace-nowrap transition-all ${
               activeSection === 'vatapi-voice'
                 ? 'bg-white text-[#00685f] shadow-xs'
                 : 'text-[#3d4947] hover:text-[#1b1c1a]'
@@ -88,7 +115,7 @@ export default function Navbar({ onOpenReportModal, onOpenChatModal, activeSecti
           </Link>
           <Link
             href="/weavers"
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide whitespace-nowrap transition-all ${
               activeSection === 'weavers'
                 ? 'bg-white text-[#00685f] shadow-xs'
                 : 'text-[#3d4947] hover:text-[#1b1c1a]'
@@ -98,7 +125,7 @@ export default function Navbar({ onOpenReportModal, onOpenChatModal, activeSecti
           </Link>
           <Link
             href="/sustainability"
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide whitespace-nowrap transition-all ${
               activeSection === 'sustainability'
                 ? 'bg-white text-[#00685f] shadow-xs'
                 : 'text-[#3d4947] hover:text-[#1b1c1a]'
@@ -108,7 +135,7 @@ export default function Navbar({ onOpenReportModal, onOpenChatModal, activeSecti
           </Link>
           <Link
             href="/access-mode"
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide whitespace-nowrap transition-all ${
               activeSection === 'access-mode'
                 ? 'bg-white text-[#00685f] shadow-xs'
                 : 'text-[#3d4947] hover:text-[#1b1c1a]'
@@ -118,7 +145,7 @@ export default function Navbar({ onOpenReportModal, onOpenChatModal, activeSecti
           </Link>
           <Link
             href="/heritage-health-check"
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide whitespace-nowrap transition-all ${
               activeSection === 'ar-scanner'
                 ? 'bg-white text-[#00685f] shadow-xs'
                 : 'text-[#3d4947] hover:text-[#1b1c1a]'
@@ -242,8 +269,43 @@ export default function Navbar({ onOpenReportModal, onOpenChatModal, activeSecti
               <span>Sign In</span>
             </Link>
           )}
+
+          {/* Mobile Menu Toggle Button */}
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="xl:hidden p-2 rounded-xl text-[#3d4947] hover:bg-[#efeeeb] transition-colors"
+            aria-label="Toggle Navigation Menu"
+          >
+            <span className="material-symbols-outlined text-[24px]">
+              {mobileMenuOpen ? 'close' : 'menu'}
+            </span>
+          </button>
         </div>
       </div>
+
+      {/* Mobile Drawer Navigation */}
+      {mobileMenuOpen && (
+        <div className="xl:hidden bg-white/98 border-b border-[#eae8e5] px-6 py-4 shadow-xl animate-in slide-in-from-top-2 duration-150">
+          <div className="grid grid-cols-2 gap-2 text-xs font-semibold">
+            <Link href="/home" onClick={() => setMobileMenuOpen(false)} className="p-2.5 rounded-lg hover:bg-[#f5f3f0]">Home</Link>
+            <Link href="/heritage-watch" onClick={() => setMobileMenuOpen(false)} className="p-2.5 rounded-lg hover:bg-[#f5f3f0]">Heritage Watch</Link>
+            <Link href="/ghost-guide" onClick={() => setMobileMenuOpen(false)} className="p-2.5 rounded-lg bg-amber-50 text-[#9a452c] font-bold flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-[16px]">crown</span> Ghost Guide
+            </Link>
+            <Link href="/oracle" onClick={() => setMobileMenuOpen(false)} className="p-2.5 rounded-lg bg-teal-50 text-[#00685f] font-bold flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-[16px]">online_prediction</span> Oracle AI
+            </Link>
+            <Link href="/ooru-oota" onClick={() => setMobileMenuOpen(false)} className="p-2.5 rounded-lg hover:bg-[#f5f3f0]">Ooru Oota</Link>
+            <Link href="/circuit-planner" onClick={() => setMobileMenuOpen(false)} className="p-2.5 rounded-lg hover:bg-[#f5f3f0]">Circuit Planner</Link>
+            <Link href="/vatapi-voice" onClick={() => setMobileMenuOpen(false)} className="p-2.5 rounded-lg hover:bg-[#f5f3f0]">Vatapi Voice</Link>
+            <Link href="/weavers" onClick={() => setMobileMenuOpen(false)} className="p-2.5 rounded-lg hover:bg-[#f5f3f0]">Artisan Weavers</Link>
+            <Link href="/sustainability" onClick={() => setMobileMenuOpen(false)} className="p-2.5 rounded-lg hover:bg-[#f5f3f0]">Sustainability</Link>
+            <Link href="/access-mode" onClick={() => setMobileMenuOpen(false)} className="p-2.5 rounded-lg hover:bg-[#f5f3f0]">Access Mode</Link>
+            <Link href="/heritage-health-check" onClick={() => setMobileMenuOpen(false)} className="p-2.5 rounded-lg hover:bg-[#f5f3f0]">AR Scanner</Link>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

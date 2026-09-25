@@ -38,6 +38,20 @@ export default function HeritageHealthCheckPage() {
               Home
             </Link>
             <Link
+              href="/ghost-guide"
+              className="px-3.5 py-1.5 rounded-lg text-xs font-bold text-amber-400 hover:text-amber-300 transition-all flex items-center gap-1"
+            >
+              <span className="material-symbols-outlined text-[15px]">crown</span>
+              Ghost Guide
+            </Link>
+            <Link
+              href="/oracle"
+              className="px-3.5 py-1.5 rounded-lg text-xs font-bold text-[#89F5E7] hover:text-white transition-all flex items-center gap-1"
+            >
+              <span className="material-symbols-outlined text-[15px]">online_prediction</span>
+              Oracle AI
+            </Link>
+            <Link
               href="/heritage-watch"
               className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-stone-300 hover:text-white transition-all"
             >
