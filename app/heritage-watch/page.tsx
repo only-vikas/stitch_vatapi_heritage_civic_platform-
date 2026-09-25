@@ -912,7 +912,7 @@ export default function HeritageWatchPage() {
 
             {/* LEFT: Map (60%) */}
             <div className="lg:col-span-7 flex flex-col gap-3">
-              <div className="relative w-full h-[680px] rounded-xl overflow-hidden shadow-md bg-[#eae8e5]">
+              <div className="relative w-full h-[680px] rounded-xl overflow-hidden shadow-md bg-[#eae8e5] z-0 isolate" style={{ isolation: 'isolate', zIndex: 0 }}>
                 <HeritageMap markers={mapMarkers} />
 
                 {/* Legend Overlay */}
@@ -1114,8 +1114,8 @@ export default function HeritageWatchPage() {
       {/* REPORT ISSUE MODAL (Prompt 3: AI Report Flow) */}
       {/* ============================================= */}
       {showReportModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="relative w-full max-w-[720px] bg-[#faf8f5] border border-[#eae4d6] rounded-[8px] shadow-[0_24px_60px_-12px_rgba(51,41,27,0.35)] overflow-hidden flex flex-col max-h-[92vh]">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/65 backdrop-blur-md p-4 animate-in fade-in duration-200">
+          <div className="relative w-full max-w-[720px] bg-[#faf8f5] border border-[#eae4d6] rounded-[8px] shadow-[0_24px_60px_-12px_rgba(51,41,27,0.35)] overflow-hidden flex flex-col max-h-[92vh] z-10">
             {/* Modal Header */}
             <header className="px-6 py-5 bg-white border-b border-[#eae4d6] flex items-start justify-between">
               <div className="flex items-start gap-3.5">
@@ -1499,8 +1499,8 @@ export default function HeritageWatchPage() {
       {/* ADOPT ISSUE MODAL (Prompt 4: Community) */}
       {/* ====================================== */}
       {showAdoptModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md bg-[#faf8f5] border border-[#eae8e5] rounded-[8px] shadow-[0_24px_60px_-12px_rgba(51,41,27,0.35)] overflow-hidden">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/65 backdrop-blur-md p-4 animate-in fade-in duration-200">
+          <div className="w-full max-w-md bg-[#faf8f5] border border-[#eae8e5] rounded-[8px] shadow-[0_24px_60px_-12px_rgba(51,41,27,0.35)] overflow-hidden z-10">
             <header className="px-6 py-4 bg-white border-b border-[#eae8e5] flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <div className="w-9 h-9 rounded-[8px] bg-[#00685f] flex items-center justify-center text-white">

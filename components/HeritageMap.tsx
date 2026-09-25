@@ -170,7 +170,7 @@ export default function HeritageMap({ markers, onMarkerClick }: HeritageMapProps
   }, [markers, onMarkerClick]);
 
   return (
-    <div ref={mapRef} className="w-full h-full rounded-xl overflow-hidden" style={{ minHeight: 400 }}>
+    <div ref={mapRef} className="w-full h-full rounded-xl overflow-hidden relative z-0 isolate" style={{ minHeight: 400, zIndex: 0 }}>
       {/* CSS for Leaflet ping animation */}
       <style jsx global>{`
         @keyframes ping {
