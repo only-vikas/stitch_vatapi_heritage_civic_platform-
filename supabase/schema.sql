@@ -13,7 +13,10 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
     username TEXT UNIQUE,
     full_name TEXT,
-    role TEXT NOT NULL DEFAULT 'citizen' CHECK (role IN ('citizen', 'official', 'artisan', 'admin')),
+    role TEXT NOT NULL DEFAULT 'citizen' CHECK (role IN ('citizen', 'volunteer', 'official', 'investor', 'artisan', 'admin')),
+    organization TEXT,
+    jurisdiction TEXT,
+    bio TEXT,
     avatar_url TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
@@ -37,14 +40,22 @@ CREATE POLICY "Users can update their own profile"
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger AS $$
 BEGIN
-  INSERT INTO public.profiles (id, username, full_name, role)
+  INSERT INTO public.profiles (id, username, full_name, role, organization, jurisdiction, bio)
   VALUES (
     new.id,
     COALESCE(new.raw_user_meta_data->>'username', split_part(new.email, '@', 1)),
     COALESCE(new.raw_user_meta_data->>'full_name', split_part(new.email, '@', 1)),
-    COALESCE(new.raw_user_meta_data->>'role', 'citizen')
+    COALESCE(new.raw_user_meta_data->>'role', 'citizen'),
+    new.raw_user_meta_data->>'organization',
+    new.raw_user_meta_data->>'jurisdiction',
+    new.raw_user_meta_data->>'bio'
   )
-  ON CONFLICT (id) DO NOTHING;
+  ON CONFLICT (id) DO UPDATE SET
+    full_name = COALESCE(EXCLUDED.full_name, profiles.full_name),
+    role = COALESCE(EXCLUDED.role, profiles.role),
+    organization = COALESCE(EXCLUDED.organization, profiles.organization),
+    jurisdiction = COALESCE(EXCLUDED.jurisdiction, profiles.jurisdiction),
+    bio = COALESCE(EXCLUDED.bio, profiles.bio);
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

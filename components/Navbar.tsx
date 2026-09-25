@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 
@@ -11,7 +11,8 @@ interface NavbarProps {
 }
 
 export default function Navbar({ onOpenReportModal, onOpenChatModal, activeSection = 'home' }: NavbarProps) {
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, activePersona, signOut } = useAuth();
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 bg-[#fbf9f6]/90 backdrop-blur-md border-b border-[#eae8e5] shadow-xs">
@@ -151,34 +152,86 @@ export default function Navbar({ onOpenReportModal, onOpenChatModal, activeSecti
             <span className="hidden sm:inline">Report Issue</span>
           </button>
 
-          {/* User Profile or Login */}
+          {/* User Profile or Login with Role Badge Pill */}
           {user ? (
-            <div className="flex items-center gap-2 pl-1">
-              <Link
-                href="/login"
-                className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl border border-[#eae8e5] bg-white hover:bg-[#f5f3f0] transition-colors"
-                title="View Profile"
-              >
-                <div className="w-7 h-7 rounded-full bg-[#00685f] text-white flex items-center justify-center font-bold text-xs uppercase">
-                  {profile?.username?.charAt(0) || user.email?.charAt(0) || 'U'}
-                </div>
-                <div className="hidden md:flex flex-col text-left">
-                  <span className="text-xs font-semibold text-[#1b1c1a] leading-none">
-                    {profile?.username || user.email?.split('@')[0]}
-                  </span>
-                  <span className="text-[10px] uppercase text-[#00685f] font-semibold mt-0.5">
-                    {profile?.role || 'Citizen'}
-                  </span>
-                </div>
-              </Link>
+            <div className="relative flex items-center gap-2 pl-1">
               <button
                 type="button"
-                onClick={() => signOut()}
-                title="Sign Out"
-                className="p-2 text-[#6d7a77] hover:text-[#ba1a1a] rounded-lg hover:bg-[#ffdad6]/40 transition-colors"
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl border border-[#eae8e5] bg-white hover:bg-[#f5f3f0] transition-all shadow-xs"
+                title="Account & Role Switcher"
               >
-                <span className="material-symbols-outlined text-[18px]">logout</span>
+                <div
+                  className="w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs uppercase text-white shadow-xs"
+                  style={{ backgroundColor: activePersona?.color || '#00685f' }}
+                >
+                  {profile?.full_name?.charAt(0) || user.email?.charAt(0) || 'U'}
+                </div>
+                
+                {/* Role Pill Badge */}
+                <div
+                  className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold tracking-wide"
+                  style={{
+                    backgroundColor: activePersona ? `${activePersona.color}15` : '#00685f15',
+                    color: activePersona?.color || '#00685f',
+                    border: `1px solid ${activePersona ? `${activePersona.color}40` : '#00685f40'}`,
+                  }}
+                >
+                  <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: activePersona?.color || '#00685f' }}></span>
+                  <span>{activePersona?.roleLabel || profile?.role || 'Citizen'}</span>
+                </div>
+
+                <span className="material-symbols-outlined text-[16px] text-[#6d7a77]">
+                  {userMenuOpen ? 'expand_less' : 'expand_more'}
+                </span>
               </button>
+
+              {/* User Dropdown Menu */}
+              {userMenuOpen && (
+                <div className="absolute right-0 top-12 w-64 bg-white rounded-2xl shadow-2xl border border-[#eae8e5] py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                  <div className="px-4 py-2.5 border-b border-[#eae8e5]">
+                    <p className="text-xs font-bold text-[#1b1c1a] truncate">{profile?.full_name || 'Active User'}</p>
+                    <p className="text-[11px] text-[#6d7a77] truncate mt-0.5">{profile?.organization || user.email}</p>
+                    <div className="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200">
+                      Role: {activePersona?.roleLabel || profile?.role}
+                    </div>
+                  </div>
+
+                  <div className="py-1">
+                    <Link
+                      href={activePersona?.dashboardPath || '/'}
+                      onClick={() => setUserMenuOpen(false)}
+                      className="w-full px-4 py-2 text-left text-xs font-semibold text-[#1b1c1a] hover:bg-[#f5f3f0] flex items-center gap-2"
+                    >
+                      <span className="material-symbols-outlined text-[16px] text-[#00685f]">dashboard</span>
+                      <span>Go to Dashboard</span>
+                    </Link>
+
+                    <Link
+                      href="/login"
+                      onClick={() => setUserMenuOpen(false)}
+                      className="w-full px-4 py-2 text-left text-xs font-semibold text-[#9a452c] hover:bg-[#ffdad6]/20 flex items-center gap-2"
+                    >
+                      <span className="material-symbols-outlined text-[16px] text-[#9a452c]">swap_horiz</span>
+                      <span>Switch Role (Demo)</span>
+                    </Link>
+                  </div>
+
+                  <div className="border-t border-[#eae8e5] pt-1">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setUserMenuOpen(false);
+                        signOut();
+                      }}
+                      className="w-full px-4 py-2 text-left text-xs font-semibold text-[#ba1a1a] hover:bg-[#ffdad6]/30 flex items-center gap-2"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">logout</span>
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <Link

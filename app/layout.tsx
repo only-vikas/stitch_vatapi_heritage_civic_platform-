@@ -3,6 +3,7 @@ import { Inter, Playfair_Display } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/context/AuthContext';
 import { IssueProvider } from '@/context/IssueContext';
+import JudgeDemoSwitcher from '@/components/JudgeDemoSwitcher';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -39,6 +40,7 @@ export default function RootLayout({
         <AuthProvider>
           <IssueProvider>
             {children}
+            <JudgeDemoSwitcher />
           </IssueProvider>
         </AuthProvider>
       </body>
