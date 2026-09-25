@@ -126,8 +126,7 @@ export default function OraclePage() {
       current: 4650,
       backers: 82,
       category: 'Structural Restoration',
-      photoUrl:
-        'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=600&q=80',
+      photoUrl: '/images/badami-cave3-pillars.jpg',
       description:
         'Adopt a 4.2mm structural crack on the 578 CE Mahavishnu portico bracket. Funds pay certified traditional stonecraft artisans to inject lime-pozzolana slurry.',
       daysLeft: 14,
@@ -141,8 +140,7 @@ export default function OraclePage() {
       current: 3200,
       backers: 58,
       category: 'Visitor Protection Barrier',
-      photoUrl:
-        'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=80',
+      photoUrl: '/images/aihole-durga-temple.png',
       description:
         'Fund modular, non-destructive brass stanchions to stop visitor tactile erosion on 7th-century celestial gandharva relief panels.',
       daysLeft: 22,
@@ -156,8 +154,7 @@ export default function OraclePage() {
       current: 5100,
       backers: 95,
       category: 'Bio-Deterioration Mitigation',
-      photoUrl:
-        'https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=600&q=80',
+      photoUrl: '/images/bhutanatha-lake-temple.jpg',
       description:
         'Apply eco-friendly poultices to safely dissolve black biological micro-crusts on water-facing east facade stone carvings.',
       daysLeft: 9,
@@ -171,8 +168,7 @@ export default function OraclePage() {
       current: 6800,
       backers: 114,
       category: 'Groundwater Management',
-      photoUrl:
-        'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=600&q=80',
+      photoUrl: '/images/pattadakal-bhairava.png',
       description:
         'Re-excavate the 8th-century stone water drainage siphon to stop monsoon floodwaters from destabilizing the Nandi Mandapa plinth.',
       daysLeft: 18,
