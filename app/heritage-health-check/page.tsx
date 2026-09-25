@@ -1,10 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import HeritageHealthScanner from '@/components/HeritageHealthScanner';
+import GhostGuide from '@/components/GhostGuide';
 
 export default function HeritageHealthCheckPage() {
+  const [isGhostGuideOpen, setIsGhostGuideOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-[#120E0C] text-[#FAF8F5] flex flex-col font-[Inter,sans-serif] selection:bg-[#0D9488] selection:text-white">
       {/* Top Header */}
@@ -89,6 +92,29 @@ export default function HeritageHealthCheckPage() {
           <HeritageHealthScanner />
         </div>
       </main>
+
+      {/* Floating Action Button: 'Talk to the Past' */}
+      <aside className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-40">
+        <button
+          type="button"
+          onClick={() => setIsGhostGuideOpen(true)}
+          className="group flex items-center gap-2.5 px-5 py-3.5 rounded-full bg-gradient-to-r from-amber-600 via-amber-500 to-[#9A452C] hover:from-amber-500 hover:to-[#8B3A22] text-stone-950 font-bold text-sm tracking-wide shadow-[0_10px_30px_rgba(217,119,6,0.4)] hover:shadow-[0_15px_40px_rgba(217,119,6,0.6)] transition-all hover:-translate-y-1 active:scale-95 border border-amber-300/40"
+          title="Speak with King Mangalesha, a Chalukyan Sculptor, or a 7th-Century Pilgrim"
+        >
+          <span className="material-symbols-outlined text-[22px] group-hover:rotate-12 transition-transform">
+            history_edu
+          </span>
+          <span>Talk to the Past</span>
+          <span className="w-2 h-2 rounded-full bg-stone-950 animate-ping"></span>
+        </button>
+      </aside>
+
+      {/* Ghost Guide Conversational AI Modal */}
+      <GhostGuide
+        isOpen={isGhostGuideOpen}
+        onClose={() => setIsGhostGuideOpen(false)}
+        monumentName="Badami Cave 3 (Vishnu Shrine)"
+      />
     </div>
   );
 }
