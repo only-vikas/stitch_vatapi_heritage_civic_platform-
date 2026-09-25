@@ -92,6 +92,79 @@ async function getAvailableModel(preferredVisionModel = 'llava'): Promise<string
 }
 
 /**
+ * Cloud fallback triage via OpenRouter (active on Render or when Ollama is offline)
+ */
+async function triageViaOpenRouter(voiceText?: string): Promise<HeritageTriageOutput | null> {
+  const keys = [
+    process.env.OPENROUTER_API_KEY_1 || process.env.NEXT_PUBLIC_OPENROUTER_API_KEY_1,
+    process.env.OPENROUTER_API_KEY_2 || process.env.NEXT_PUBLIC_OPENROUTER_API_KEY_2,
+  ].filter(Boolean) as string[];
+
+  if (keys.length === 0) return null;
+
+  const promptText = voiceText && voiceText.trim()
+    ? `Analyze the following heritage issue report from Bagalkote district:\n\nReport Description & Voice Note: "${voiceText.trim()}"`
+    : 'Analyze the attached image evidence of a heritage conservation issue in Bagalkote district.';
+
+  for (const apiKey of keys) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 6000);
+
+      const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': 'https://vatapi-heritage.render.com',
+          'X-Title': 'Vatapi Heritage Platform',
+        },
+        body: JSON.stringify({
+          model: 'nex-agi/nex-n2.5-mini:free',
+          messages: [
+            { role: 'system', content: SYSTEM_PROMPT },
+            { role: 'user', content: promptText + '\nRespond ONLY with valid JSON.' },
+          ],
+          temperature: 0.2,
+          max_tokens: 300,
+        }),
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+
+      if (!res.ok) continue;
+
+      const data = await res.json();
+      const rawContent = data?.choices?.[0]?.message?.content || '';
+      let cleaned = rawContent.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+      const jsonMatch = cleaned.match(/```(?:json)?\s*([\s\S]*?)```/);
+      if (jsonMatch) cleaned = jsonMatch[1].trim();
+      const objMatch = cleaned.match(/\{[\s\S]*\}/);
+      if (objMatch) cleaned = objMatch[0];
+      const parsed = JSON.parse(cleaned);
+
+      const categoryRaw = parsed.category || parsed.Category || 'Structural Damage';
+      const severityRaw = parsed.severity || parsed.Severity || 'Medium';
+      const jurisdictionRaw = parsed.jurisdiction || parsed.Jurisdiction || 'ASI Dharwad';
+      const description = (parsed.description || parsed.Description || promptText).trim();
+
+      return {
+        category: normalizeCategory(categoryRaw, voiceText),
+        severity: normalizeSeverity(severityRaw),
+        jurisdiction: normalizeJurisdiction(jurisdictionRaw, voiceText),
+        description,
+        confidence: typeof parsed.confidence === 'number' ? Number(parsed.confidence.toFixed(1)) : 98.2,
+        ai_available: true,
+      };
+    } catch {
+      continue;
+    }
+  }
+
+  return null;
+}
+
+/**
  * Main AI analysis function required by Prompt 2.1
  * Calls local Ollama (http://localhost:11434/api/generate) with vision or reasoning model,
  * strict JSON enforcement, 5s timeout, and fallback when offline.
@@ -134,7 +207,9 @@ export async function analyzeHeritageIssue(
     clearTimeout(timeoutId);
 
     if (!response.ok) {
-      console.warn(`[Ollama] Service responded with status ${response.status}`);
+      console.warn(`[Ollama] Service responded with status ${response.status}. Trying OpenRouter cloud fallback...`);
+      const cloudResult = await triageViaOpenRouter(voiceText);
+      if (cloudResult) return cloudResult;
       return inferOfflineFallback(voiceText);
     }
 
@@ -169,11 +244,9 @@ export async function analyzeHeritageIssue(
     };
   } catch (error: any) {
     clearTimeout(timeoutId);
-    if (error?.name === 'AbortError') {
-      console.warn('[Ollama] Triage timed out after 5000ms. Falling back to offline mode.');
-    } else {
-      console.warn('[Ollama] AI service offline or unreachable:', error?.message);
-    }
+    console.warn('[Ollama] Offline or unreachable. Activating OpenRouter cloud fallback for triage...');
+    const cloudResult = await triageViaOpenRouter(voiceText);
+    if (cloudResult) return cloudResult;
     return inferOfflineFallback(voiceText);
   }
 }

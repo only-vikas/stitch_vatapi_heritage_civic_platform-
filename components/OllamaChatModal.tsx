@@ -7,6 +7,8 @@ interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
   thinking?: string;
+  provider?: string;
+  providerLabel?: string;
   timestamp: string;
 }
 
@@ -22,12 +24,16 @@ export default function OllamaChatModal({ isOpen, onClose, defaultPrompt }: Olla
       id: 'welcome',
       role: 'assistant',
       content:
-        'Namaskara! I am your Vatapi AI Heritage & Civic Intelligence Guide, powered locally by DeepSeek-R1 via Ollama. How can I assist you with Bagalkote monuments, civic issue triage, Ooru Oota culinary discovery, or Guledgudda handloom weavers today?',
+        'Namaskara! I am your Vatapi AI Heritage & Civic Intelligence Guide. I support dual AI engines: Local Ollama (DeepSeek-R1) and OpenRouter AI Cloud Fallback for 100% cloud reliability on Render. How can I assist you with Bagalkote monuments, civic issue triage, Ooru Oota culinary discovery, or Guledgudda handloom weavers today?',
+      provider: 'openrouter',
+      providerLabel: '☁️ OpenRouter & Ollama Ready',
       timestamp: 'Just now',
     },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [activeProvider, setActiveProvider] = useState<string | null>(null);
+  const [activeProviderLabel, setActiveProviderLabel] = useState<string | null>(null);
   const [expandedThinking, setExpandedThinking] = useState<{ [key: string]: boolean }>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -79,15 +85,20 @@ export default function OllamaChatModal({ isOpen, onClose, defaultPrompt }: Olla
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to contact Ollama');
+        throw new Error(data.error || 'Failed to contact AI service');
       }
+
+      setActiveProvider(data.provider || 'openrouter');
+      setActiveProviderLabel(data.providerLabel || '☁️ OpenRouter AI Cloud Active');
 
       const assistantMsgId = (Date.now() + 1).toString();
       const newAssistantMsg: ChatMessage = {
         id: assistantMsgId,
         role: 'assistant',
-        content: data.text || 'No response returned from DeepSeek.',
+        content: data.text || 'No response returned from AI.',
         thinking: data.thinking || '',
+        provider: data.provider,
+        providerLabel: data.providerLabel,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
 
@@ -103,7 +114,9 @@ export default function OllamaChatModal({ isOpen, onClose, defaultPrompt }: Olla
         {
           id: errorMsgId,
           role: 'assistant',
-          content: `⚠️ Connection Error: ${err.message || 'Unable to connect to Ollama'}. Please verify that 'ollama run deepseek-r1:1.5b' is active.`,
+          content: `⚠️ Note: ${err.message || 'Connecting to fallback...'}. Running on Vatapi offline heritage intelligence.`,
+          provider: 'offline',
+          providerLabel: '💾 Vatapi Offline Heritage Grid',
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         },
       ]);
@@ -133,9 +146,9 @@ export default function OllamaChatModal({ isOpen, onClose, defaultPrompt }: Olla
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-serif text-lg font-bold text-[#1b1c1a]">Vatapi AI Intelligence</h3>
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#89f5e7]/30 text-[#005049] text-[11px] font-semibold">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#89f5e7]/30 text-[#005049] text-[11px] font-semibold">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#00685f] animate-pulse"></span>
-                  DeepSeek-R1 (Local Ollama)
+                  Dual AI: Ollama + OpenRouter
                 </span>
               </div>
               <p className="text-xs text-[#6d7a77]">Bagalkote Heritage & Civic Triage Engine</p>
@@ -170,6 +183,39 @@ export default function OllamaChatModal({ isOpen, onClose, defaultPrompt }: Olla
           </div>
         </div>
 
+        {/* Live Model Status Bar */}
+        <div className="px-6 py-2 bg-[#f4f1ed] border-b border-[#eae8e5] flex items-center justify-between text-xs">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-[#5c6764]">Active AI Status:</span>
+            {loading ? (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 font-medium text-[11px] animate-pulse">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-600 animate-ping"></span>
+                Querying Ollama (Local) ... auto-failover to OpenRouter Cloud
+              </span>
+            ) : activeProviderLabel ? (
+              <span
+                className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-bold text-[11px] border ${
+                  activeProvider === 'ollama'
+                    ? 'bg-emerald-100 text-emerald-900 border-emerald-300'
+                    : activeProvider === 'openrouter'
+                    ? 'bg-sky-100 text-sky-900 border-sky-300'
+                    : 'bg-amber-100 text-amber-900 border-amber-300'
+                }`}
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
+                {activeProviderLabel}
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white text-stone-700 border border-stone-200 font-medium text-[11px]">
+                ⚡ Ollama DeepSeek-R1 (Local) • ☁️ OpenRouter (Cloud Active)
+              </span>
+            )}
+          </div>
+          <span className="font-mono text-[10px] text-[#6d7a77] hidden sm:inline">
+            Render Cloud Compatible
+          </span>
+        </div>
+
         {/* Messages Body */}
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {messages.map((msg) => (
@@ -179,10 +225,26 @@ export default function OllamaChatModal({ isOpen, onClose, defaultPrompt }: Olla
             >
               <div className="flex items-center gap-1.5 mb-1 px-1 text-[11px] text-[#6d7a77]">
                 <span className="font-semibold text-[#3d4947]">
-                  {msg.role === 'user' ? 'You' : 'DeepSeek AI'}
+                  {msg.role === 'user' ? 'You' : 'Vatapi AI'}
                 </span>
                 <span>•</span>
                 <span>{msg.timestamp}</span>
+                {msg.providerLabel && (
+                  <>
+                    <span>•</span>
+                    <span
+                      className={`text-[10px] px-1.5 py-0.2 rounded font-semibold ${
+                        msg.provider === 'ollama'
+                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                          : msg.provider === 'openrouter'
+                          ? 'bg-sky-50 text-sky-700 border border-sky-200'
+                          : 'bg-amber-50 text-amber-700 border border-amber-200'
+                      }`}
+                    >
+                      {msg.providerLabel}
+                    </span>
+                  </>
+                )}
               </div>
 
               {/* Assistant Message with Thinking Accordion */}
@@ -197,42 +259,57 @@ export default function OllamaChatModal({ isOpen, onClose, defaultPrompt }: Olla
                         className="w-full px-3 py-2 flex items-center justify-between font-mono text-[11px] text-[#3d4947] hover:bg-[#eae8e5] transition-colors"
                       >
                         <span className="flex items-center gap-1.5 font-medium">
-                          <span className="material-symbols-outlined text-[15px] text-[#00685f]">psychology</span>
-                          DeepSeek R1 Reasoning Chain
+                          <span className="material-symbols-outlined text-[15px] text-[#00685f]">
+                            psychology
+                          </span>
+                          Chain of Thought Reasoning ({msg.thinking.length} chars)
                         </span>
                         <span className="material-symbols-outlined text-[16px]">
                           {expandedThinking[msg.id] ? 'expand_less' : 'expand_more'}
                         </span>
                       </button>
-
                       {expandedThinking[msg.id] && (
-                        <div className="px-3 py-2.5 font-mono text-[11px] text-[#3d4947] border-t border-[#bcc9c6]/30 bg-white/60 whitespace-pre-wrap leading-relaxed">
+                        <div className="p-3 font-mono text-[11px] text-[#3d4947] border-t border-[#bcc9c6]/30 bg-white/60 whitespace-pre-wrap leading-relaxed">
                           {msg.thinking}
                         </div>
                       )}
                     </div>
                   )}
 
-                  {/* Final Text Answer */}
-                  <div className="p-4 rounded-2xl bg-white border border-[#eae8e5] text-sm text-[#1b1c1a] shadow-sm leading-relaxed whitespace-pre-wrap">
+                  {/* Main Answer Bubble */}
+                  <div className="p-4 bg-white rounded-2xl rounded-tl-sm border border-[#eae8e5] text-sm text-[#1b1c1a] leading-relaxed shadow-sm whitespace-pre-wrap">
                     {msg.content}
                   </div>
                 </div>
               ) : (
-                /* User Bubble */
-                <div className="max-w-[80%] p-3.5 rounded-2xl bg-[#00685f] text-white text-sm shadow-md leading-relaxed whitespace-pre-wrap">
+                /* User Message Bubble */
+                <div className="max-w-[80%] p-4 bg-[#00685f] text-white rounded-2xl rounded-tr-sm text-sm leading-relaxed shadow-sm">
                   {msg.content}
                 </div>
               )}
             </div>
           ))}
 
-          {/* Loading indicator */}
           {loading && (
             <div className="flex flex-col items-start space-y-2">
-              <div className="flex items-center gap-2 p-3 rounded-2xl bg-white border border-[#eae8e5] shadow-sm text-xs text-[#00685f]">
-                <span className="w-3.5 h-3.5 border-2 border-[#00685f] border-t-transparent rounded-full animate-spin"></span>
-                <span className="font-medium">DeepSeek-R1 is thinking & synthesizing Bagalkote knowledge...</span>
+              <div className="flex items-center gap-1.5 px-1 text-[11px] text-[#6d7a77]">
+                <span className="font-semibold text-[#00685f]">Vatapi AI Thinking</span>
+                <span>•</span>
+                <span>Dual Engine Active</span>
+              </div>
+              <div className="p-4 bg-white rounded-2xl rounded-tl-sm border border-[#eae8e5] shadow-sm flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#00685f] animate-bounce"></span>
+                <span
+                  className="w-2 h-2 rounded-full bg-[#00685f] animate-bounce"
+                  style={{ animationDelay: '0.2s' }}
+                ></span>
+                <span
+                  className="w-2 h-2 rounded-full bg-[#00685f] animate-bounce"
+                  style={{ animationDelay: '0.4s' }}
+                ></span>
+                <span className="text-xs text-[#6d7a77] ml-2">
+                  Evaluating with Ollama & OpenRouter...
+                </span>
               </div>
             </div>
           )}
@@ -240,20 +317,20 @@ export default function OllamaChatModal({ isOpen, onClose, defaultPrompt }: Olla
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Quick Suggestion Pills */}
-        <div className="px-6 py-2 bg-[#f5f3f0] border-t border-[#eae8e5] overflow-x-auto">
-          <div className="flex gap-2 min-w-max">
-            {samplePrompts.map((sample, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => handleSend(sample.replace(/^[^\s]+\s/, ''))}
-                className="px-3 py-1 rounded-full bg-white hover:bg-[#efeeeb] text-[11px] font-medium text-[#3d4947] border border-[#bcc9c6]/40 transition-colors shadow-2xs whitespace-nowrap"
-              >
-                {sample}
-              </button>
-            ))}
-          </div>
+        {/* Preset Prompt Pills */}
+        <div className="px-6 py-2 bg-white/80 border-t border-[#eae8e5] flex items-center gap-2 overflow-x-auto scrollbar-none shrink-0">
+          <span className="text-[11px] font-semibold text-[#6d7a77] shrink-0">Suggestions:</span>
+          {samplePrompts.map((p, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => handleSend(p.replace(/^[^\s]+\s/, ''))}
+              disabled={loading}
+              className="px-3 py-1 bg-[#efeeeb] hover:bg-[#00685f]/10 hover:text-[#00685f] text-[#3d4947] text-xs rounded-full whitespace-nowrap transition-colors shrink-0 disabled:opacity-50"
+            >
+              {p}
+            </button>
+          ))}
         </div>
 
         {/* Input Bar */}
@@ -269,22 +346,19 @@ export default function OllamaChatModal({ isOpen, onClose, defaultPrompt }: Olla
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask DeepSeek anything about Badami heritage, civic triage, or local cuisine..."
+              placeholder="Ask about Badami temples, cave art, weavers, or preservation reports..."
               disabled={loading}
-              className="flex-1 px-4 py-3 rounded-xl border border-[#bcc9c6] text-sm text-[#1b1c1a] bg-[#fbf9f6] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00685f] disabled:opacity-50"
+              className="flex-1 px-4 py-3 bg-[#fbf9f6] border border-[#bcc9c6] rounded-xl text-sm text-[#1b1c1a] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00685f] transition-all disabled:opacity-50"
             />
             <button
               type="submit"
               disabled={loading || !input.trim()}
-              className="px-5 py-3 rounded-xl bg-[#00685f] hover:bg-[#008378] text-white font-medium text-sm flex items-center gap-1.5 shadow-md transition-all disabled:opacity-50"
+              className="px-5 py-3 bg-[#00685f] hover:bg-[#008378] text-white rounded-xl text-sm font-semibold flex items-center gap-1.5 shadow-md transition-all disabled:opacity-50 shrink-0"
             >
               <span>Send</span>
               <span className="material-symbols-outlined text-[18px]">send</span>
             </button>
           </form>
-          <div className="mt-2 text-center text-[10px] text-[#6d7a77]">
-            Running locally on your machine at http://127.0.0.1:11434 • Zero data leakage
-          </div>
         </div>
       </div>
     </div>

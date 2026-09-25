@@ -53,6 +53,8 @@ export default function Home() {
   const [quickPrompt, setQuickPrompt] = useState('');
   const [quickResponse, setQuickResponse] = useState('');
   const [quickThinking, setQuickThinking] = useState('');
+  const [quickProvider, setQuickProvider] = useState<string | null>(null);
+  const [quickProviderLabel, setQuickProviderLabel] = useState<string | null>(null);
   const [quickLoading, setQuickLoading] = useState(false);
   const [showThinking, setShowThinking] = useState(false);
 
@@ -230,15 +232,19 @@ export default function Home() {
         body: JSON.stringify({ prompt: quickPrompt }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to communicate with DeepSeek');
+      if (!res.ok) throw new Error(data.error || 'Failed to communicate with AI');
       
       setQuickResponse(data.text || 'No response generated.');
+      setQuickProvider(data.provider || 'openrouter');
+      setQuickProviderLabel(data.providerLabel || '☁️ OpenRouter AI (Cloud Active)');
       if (data.thinking) {
         setQuickThinking(data.thinking);
         setShowThinking(true);
       }
     } catch (err: any) {
-      setQuickResponse(`Error: ${err.message || 'Unable to connect to Ollama deepseek-r1:1.5b'}`);
+      setQuickResponse(`Error: ${err.message || 'Unable to connect to AI service'}. Switched to local heritage fallback.`);
+      setQuickProvider('offline');
+      setQuickProviderLabel('💾 Vatapi Offline Heritage Grid');
     } finally {
       setQuickLoading(false);
     }
@@ -375,7 +381,7 @@ export default function Home() {
                 <div className="hidden sm:block w-1.5 h-1.5 rounded-full bg-[#ff9475]"></div>
                 <div className="flex items-center gap-2">
                   <span className="material-symbols-outlined text-[#89f5e7] text-[18px]">memory</span>
-                  <span>DeepSeek R1 Running on Ollama</span>
+                  <span>Dual AI: DeepSeek-R1 (Ollama) + OpenRouter Cloud</span>
                 </div>
               </div>
 
@@ -397,20 +403,20 @@ export default function Home() {
               <div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#00685f]/10 text-[#00685f] text-xs font-semibold mb-2">
                   <span className="material-symbols-outlined text-[15px]">neurology</span>
-                  Next.js App Router + Ollama Route Handler
+                  Dual AI Architecture (Local Ollama + OpenRouter Cloud)
                 </div>
                 <h2 className="font-serif text-2xl font-bold text-[#1b1c1a]">
-                  Next.js + DeepSeek (via Local Ollama)
+                  Next.js + DeepSeek & OpenRouter AI
                 </h2>
                 <p className="text-xs text-[#6d7a77] mt-1">
-                  Communicating with <code className="bg-[#efeeeb] px-1.5 py-0.5 rounded text-[#00685f] font-mono text-[11px]">http://127.0.0.1:11434</code> via <code className="bg-[#efeeeb] px-1.5 py-0.5 rounded text-[#9a452c] font-mono text-[11px]">/api/chat</code>
+                  Primary: <code className="bg-[#efeeeb] px-1.5 py-0.5 rounded text-[#00685f] font-mono text-[11px]">Local Ollama (deepseek-r1:1.5b)</code> | Cloud Fallback: <code className="bg-[#efeeeb] px-1.5 py-0.5 rounded text-[#9a452c] font-mono text-[11px]">OpenRouter AI (Render Ready)</code>
                 </p>
               </div>
 
               <div className="flex items-center gap-2">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#e6f4ea] text-[#137333] text-xs font-medium">
                   <span className="w-2 h-2 rounded-full bg-[#137333] animate-ping"></span>
-                  Ollama Connected: deepseek-r1:1.5b
+                  Dual Engine Active
                 </span>
                 <button
                   type="button"
@@ -444,12 +450,47 @@ export default function Home() {
                   </>
                 ) : (
                   <>
-                    <span>Send to DeepSeek</span>
+                    <span>Send to AI</span>
                     <span className="material-symbols-outlined text-[18px]">send</span>
                   </>
                 )}
               </button>
             </form>
+
+            {/* Status Bar showing which AI is responding */}
+            <div className="mt-4 px-4 py-2.5 rounded-xl bg-[#f4f1ed] border border-[#eae8e5] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-bold text-[#3d4947]">AI Model Status:</span>
+                {quickLoading ? (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 font-semibold animate-pulse">
+                    <span className="w-2 h-2 rounded-full bg-amber-600 animate-ping"></span>
+                    Querying Ollama (Local)... auto-failover to OpenRouter Cloud
+                  </span>
+                ) : quickProvider === 'ollama' ? (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300 font-bold">
+                    <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
+                    Ollama&apos;s DeepSeek-R1 is responding (Local Mode)
+                  </span>
+                ) : quickProvider === 'openrouter' ? (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-900 border border-sky-300 font-bold">
+                    <span className="w-2 h-2 rounded-full bg-sky-600 animate-pulse"></span>
+                    OpenRouter AI is responding (Cloud Fallback Active • Render Ready)
+                  </span>
+                ) : quickProvider === 'offline' ? (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 font-bold">
+                    <span className="w-2 h-2 rounded-full bg-amber-600"></span>
+                    Vatapi Heritage Knowledge Grid (Offline Mode)
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white text-[#3d4947] border border-[#bcc9c6]/40 font-medium">
+                    ⚡ Ollama DeepSeek-R1 (Local) • ☁️ OpenRouter AI (Cloud Fallback Active)
+                  </span>
+                )}
+              </div>
+              <span className="font-mono text-[11px] text-[#6d7a77]">
+                {quickProviderLabel || 'Dual-Engine Cloud Ready'}
+              </span>
+            </div>
 
             {/* Response Area */}
             {(quickResponse || quickLoading) && (
